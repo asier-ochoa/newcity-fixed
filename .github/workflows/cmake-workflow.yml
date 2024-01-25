@@ -31,12 +31,14 @@ jobs:
       - name: Configure CMake
         run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
 
-      - name: Build
-        run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} --target newcity 
+      # - name: Build
+      #   run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} --target newcity 
 
-      - name: Package build
-        # Zips all of the game files
-        run: zip -r newcity-linux.zip build/contributors/ build/data/ build/designs/ build/docs/ build/fonts/ build/locale/ build/models/ build/modpacks/ build/newcity build/newspaper/ build/saves/ build/shaders/ build/sound/ build/textures/
+      # - name: Package build
+      #   # Zips all of the game files
+      #   run: |
+      #     cd work/newcity-fixed/newcity-fixed/build
+      #     zip -r ~/newcity-linux.zip contributors/ data/ designs/ docs/ fonts/ locale/ models/ modpacks/ newcity newspaper/ saves/ shaders/ sound/ textures/
         
       - name: Create Release
         id: create_release
@@ -44,20 +46,20 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ github.sha }}
-          release_name: Release ${{ github.sha }}
+          tag_name: v ${{ github.github.run_number }}
+          release_name: Release ${{ github.github.run_number }}
           body: |
             Testing
           draft: false
           prerelease: false
 
-      - name: Upload Release Asset
-        id: upload-release-asset 
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./newcity-linux.zip
-          asset_name: newcity-linux.zip
-          asset_content_type: application/zip
+      # - name: Upload Release Asset
+      #   id: upload-release-asset 
+      #   uses: actions/upload-release-asset@v1
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #   with:
+      #     upload_url: ${{ steps.create_release.outputs.upload_url }}
+      #     asset_path: ./newcity-linux.zip
+      #     asset_name: newcity-linux.zip
+      #     asset_content_type: application/zip
