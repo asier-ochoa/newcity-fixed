@@ -37,8 +37,8 @@ jobs:
       - name: Package build
         # Zips all of the game files
         run: |
-          cd ~/work/newcity-fixed/newcity-fixed/build
-          zip -r ~/newcity-linux.zip contributors/ data/ designs/ docs/ fonts/ locale/ models/ modpacks/ newcity newspaper/ saves/ shaders/ sound/ textures/
+          cd ${{github.workspace}}/build
+          zip -r ${{github.workspace}}/newcity-linux.zip contributors/ data/ designs/ docs/ fonts/ locale/ models/ modpacks/ newcity newspaper/ saves/ shaders/ sound/ textures/
         
       - name: Create Release
         id: create_release
@@ -60,6 +60,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ~/newcity-linux.zip
+          asset_path: ${{github.workspace}}/newcity-linux.zip
           asset_name: newcity-linux.zip
           asset_content_type: application/zip
