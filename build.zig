@@ -218,6 +218,9 @@ pub fn build(b: *std.Build) !void {
     const target = b.standardTargetOptions(.{});
     const optimize = b.standardOptimizeOption(.{});
 
+    // Declare extra compile options
+    // b.option(bool, "Enable Steam", "Enables compiling the steam")
+
     // Declare main program
     const newcity_exe = b.addExecutable(.{
         .name = "newcity",
@@ -236,6 +239,7 @@ pub fn build(b: *std.Build) !void {
     newcity_exe.defineCMacro("BOOST_NO_EXCEPTIONS", null);
     newcity_exe.defineCMacro("INCLUDE_STEAM", null);
     newcity_exe.defineCMacro("LP_DEBUG", null);
+    newcity_exe.defineCMacro("INCLUDE_STEAM", null);
 
     // Configure source files
     newcity_exe.addCSourceFiles(.{
@@ -263,7 +267,6 @@ pub fn build(b: *std.Build) !void {
     newcity_exe.linkSystemLibrary("gl");
     newcity_exe.linkSystemLibrary("freetype");
     newcity_exe.linkSystemLibrary("steam_api");
-    newcity_exe.linkSystemLibrary("fmt");
 
     // Declare executable artifact
     const installed_exe = b.addInstallArtifact(newcity_exe, .{});
@@ -276,7 +279,11 @@ fn addLibraryIncludePaths(newcity_exe: *std.Build.Step.Compile) void {
     newcity_exe.addSystemIncludePath(.{.cwd_relative = "external/glfw-3.3/include/GLFW/"});
     newcity_exe.addSystemIncludePath(.{.cwd_relative = "external/glm-0.9.7.1/"});
     newcity_exe.addSystemIncludePath(.{.cwd_relative = "external/openal-soft/include/"});
-    newcity_exe.addSystemIncludePath(.{.cwd_relative = "external/spdlog-1.5.0/include/"});
+    // spdlog's fmt
+    newcity_exe.addSystemIncludePath(.{.cwd_relative = "external/spdlog-1.5.0/include/spdlog/fmt/"});
+    newcity_exe.addSystemIncludePath(.{.cwd_relative = "external/spdlog-1.5.0/include/spdlog/"});
+    // Add the same but non systemlevel
+    newcity_exe.addIncludePath(.{.cwd_relative = "external/spdlog-1.5.0/include"});
     newcity_exe.addSystemIncludePath(.{.cwd_relative = "external/gcc/libbacktrace/"});
     newcity_exe.addSystemIncludePath(.{.cwd_relative = "external/lua-5.3.5/src/"});
     newcity_exe.addSystemIncludePath(.{.cwd_relative = "external/freetype/include/"});
