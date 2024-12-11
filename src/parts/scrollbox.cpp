@@ -65,7 +65,7 @@ Part* scrollboxFrame(vec2 start, vec2 size, float innerSpace,
   // Smooth scrolling
   float time = getCameraTime();
   state->amount = mix(state->amount, state->target,
-      5*clamp(time - state->lastCameraTime, 0.f, 0.1f));
+      5*glm::clamp(time - state->lastCameraTime, 0.f, 0.1f));
   if (abs(state->amount - state->target) < 0.02f) state->amount = state->target;
 
   state->lastCameraTime = time;

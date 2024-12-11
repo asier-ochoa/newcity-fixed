@@ -561,7 +561,7 @@ void adjustStat(item econNdx, item ndx, float adj) {
     return;
   }
   if (ndx >= numStatistics || ndx < 0) {
-    SPDLOG_WARN("bad statistic {}/{}", ndx, numStatistics);
+    SPDLOG_WARN("bad statistic {}/{}", static_cast<int>(ndx), static_cast<int>(numStatistics));
     return;
   }
 
@@ -617,7 +617,7 @@ float getStatisticAt(item econNdx, Statistic stat, float time) {
       //printDurationString(sample->timeStep));
   float endDate = sample->startDate + sample->timeStep * numValues;
   float targetSlice = (time - sample->startDate)/sample->timeStep;
-  item targetNum = clamp(int(round(targetSlice)), 0, numValues);
+  item targetNum = glm::clamp(int(round(targetSlice)), 0, numValues);
   //SPDLOG_INFO("getStatisticAt endDate{} targetSlice{} targetNum{}",
       //endDate, targetSlice, targetNum);
   if (numValues == 0 || !sample->hasData) {
@@ -639,7 +639,7 @@ float getStatisticSum(item econNdx, Statistic stat, float time) {
   item numValues = sample->values.size();
   float endDate = sample->startDate + sample->timeStep * numValues;
   float targetSlice = (time - sample->startDate)/sample->timeStep;
-  item targetNum = clamp(int(round(targetSlice)), 0, numValues);
+  item targetNum = glm::clamp(int(round(targetSlice)), 0, numValues);
   if (numValues == 0 || !sample->hasData || targetNum >= numValues) {
     return 0;
   } else if (sample->startDate > time) {
@@ -661,7 +661,7 @@ float getStatisticAvg(item econNdx, Statistic stat, float time) {
   float endDate = sample->startDate + sample->timeStep * numValues;
   float startDate = endDate - time;
   float targetSlice = (startDate - sample->startDate)/sample->timeStep;
-  item targetNum = clamp(int(round(targetSlice)), 0, numValues-1);
+  item targetNum = glm::clamp(int(round(targetSlice)), 0, numValues-1);
   /*
   SPDLOG_INFO("do getStatisticAvg({},{},{}) targetSlice {} endDate{} startDate{} sample->startDate{} sample->timeStep{}",
       econNdx, statisticCode[stat], time, targetSlice, endDate, startDate,
@@ -692,7 +692,7 @@ float getStatisticMin(item econNdx, Statistic stat, float time) {
   item numValues = sample->values.size();
   float endDate = sample->startDate + sample->timeStep * numValues;
   float targetSlice = (time - sample->startDate)/sample->timeStep;
-  item targetNum = clamp(int(round(targetSlice)), 0, numValues);
+  item targetNum = glm::clamp(int(round(targetSlice)), 0, numValues);
   if (numValues == 0 || !sample->hasData || targetNum >= numValues) {
     return 0;
   } else if (sample->startDate > time) {
@@ -715,7 +715,7 @@ float getStatisticMax(item econNdx, Statistic stat, float time) {
   item numValues = sample->values.size();
   float endDate = sample->startDate + sample->timeStep * numValues;
   float targetSlice = (time - sample->startDate)/sample->timeStep;
-  item targetNum = clamp(int(round(targetSlice)), 0, numValues);
+  item targetNum = glm::clamp(int(round(targetSlice)), 0, numValues);
   if (numValues == 0 || !sample->hasData || targetNum >= numValues) {
     return 0;
   } else if (sample->startDate > time) {
@@ -862,9 +862,9 @@ float getStatistic(item econNdx, Statistic stat) {
         nonZero(getStatisticNow(econNdx, NumTouristsNow));
       double rating = memoriesPerTourist / c(CMemoriesForFiveStars) * 5;
       float lastVal = getStatisticAvg(econNdx, TouristRating, 1);
-      rating = clamp(rating, -1., 6.);
+      rating = glm::clamp(rating, -1., 6.);
       rating = mix(double(lastVal), rating, oneHour);
-      rating = clamp(rating, 0., 5.);
+      rating = glm::clamp(rating, 0., 5.);
       return rating;
     } break;
 
@@ -945,14 +945,14 @@ void updateEconomy(float duration) {
   econDet -= prosperity*adjRate*.0075;
   economicDeterminant = mix(economicDeterminant, econDet, adjRate*1.);
   economicDeterminant += randFloat(-1, 1)*adjRate*4.;
-  economicDeterminant = clamp(economicDeterminant, 0., 1.);
+  economicDeterminant = glm::clamp(economicDeterminant, 0., 1.);
   setStat(nationalEconNdx(), EconomicDeterminant, economicDeterminant);
 
   double unemp = mix(0.04, 0.20, pow(1-economicDeterminant, 2));
   unemp += randFloat(-0.02, 0.02);
   nationalUnemp = mix(nationalUnemp, unemp, adjRate*.2);
   nationalUnemp += randFloat(-1., 1.)*adjRate;
-  nationalUnemp = clamp(nationalUnemp, 0., 0.3);
+  nationalUnemp = glm::clamp(nationalUnemp, 0., 0.3);
   setStat(nationalEconNdx(), NationalUnemploymentRate, nationalUnemp);
 
   double infRate = mix(0.00, 0.08, pow(economicDeterminant, 1.5));
@@ -968,12 +968,12 @@ void updateEconomy(float duration) {
   interest += randFloat(-0.02, 0.02);
   nationalInterestRate = mix(nationalInterestRate, interest, adjRate);
   nationalInterestRate += randFloat(-1, 1)*adjRate;
-  nationalInterestRate = clamp(nationalInterestRate, 0., 0.2);
+  nationalInterestRate = glm::clamp(nationalInterestRate, 0., 0.2);
   setStat(nationalEconNdx(), NationalInterestRate, nationalInterestRate);
 
   double traj = mix(-.8, 2., 1-pow(1-economicDeterminant, 4));
   traj += randFloat(-0.5, 0.5);
-  traj = clamp(traj, 0.1, 2.0);
+  traj = glm::clamp(traj, 0.1, 2.0);
   nationalStockTrajectory = mix(nationalStockTrajectory, traj, adjRate*4);
   nationalStockIndex *= mix(1., nationalStockTrajectory, adjRate*.05);
   nationalStockIndex += nationalStockIndex * randFloat(-1,1.) * .0025;
@@ -982,7 +982,7 @@ void updateEconomy(float duration) {
 
   //Target Unemployment Rate
   float bias = mix(c(CTargetUnemploymentBias0), c(CTargetUnemploymentBias1M),
-    clamp(numPeople(ourCityEconNdx())/1000000.f, 0.f, 1.f));
+    glm::clamp(numPeople(ourCityEconNdx())/1000000.f, 0.f, 1.f));
   float bizEffect = getEffectMultiplier(BusinessEffect);
   float adjustment = bias
     + (.5f-heatMapTotal(Prosperity)) * 0.05f;
@@ -991,13 +991,13 @@ void updateEconomy(float duration) {
     + getTaxRate(SalesTax) * c(CSalesTaxUnemploymentEffect)
     + getTaxRate(FinesAndFeesIncome) * c(CFinesAndFeesTaxUnemploymentEffect);
   float intrinsicRate = nationalUnemploymentRate()*2*getEffectMultiplier(BusinessEffect);
-  float nextTarget = clamp(intrinsicRate + adjustment, 0.01f, 0.4f);
+  float nextTarget = glm::clamp(intrinsicRate + adjustment, 0.01f, 0.4f);
   if (statsReset) {
     targetUnemp = nextTarget;
   } else {
     targetUnemp = mix(targetUnemp, nextTarget, adjRate*20);
   }
-  targetUnemp = clamp(targetUnemp, 0.f, 0.25f);
+  targetUnemp = glm::clamp(targetUnemp, 0.f, 0.25f);
 
   // Fuel
   setStat(nationalEconNdx(), FuelPrice,
@@ -1035,7 +1035,7 @@ void updateZoneDemand(float duration) {
 
         float unemploymentDiff = unemploymentRate(econ) -
           targetUnemploymentRate(econ);
-        result *= clamp(1 - unemploymentDiff/c(CMaxUnemploymentDiff),
+        result *= glm::clamp(1 - unemploymentDiff/c(CMaxUnemploymentDiff),
             0.f, 1.f);
 
         if (i == MixedUseZone) {
@@ -1062,7 +1062,7 @@ void updateZoneDemand(float duration) {
 
       //SPDLOG_INFO("zone demand {} {}=>{}",
           //getEcon(econ)->name, i, result);
-      result = clamp(result*2.f, 0.f, 1.f);
+      result = glm::clamp(result*2.f, 0.f, 1.f);
       if (result > topDemand && i != MixedUseZone && i != FarmZone &&
           i != FactoryZone) topDemand = result;
       setStat(econ, ResidentialZoneDemand+i-1, result);

@@ -150,7 +150,7 @@ endif()
 
 if(NOT WIN32)
   SET(CMAKE_CXX_FLAGS
-    "${CMAKE_CXX_FLAGS} -g -std=c++14")
+    "${CMAKE_CXX_FLAGS} -g -std=c++17")
 	SET(CMAKE_CXX_FLAGS
   "${CMAKE_CXX_FLAGS} -Werror=return-type") #-Wall
 SET(CMAKE_CXX_FLAGS

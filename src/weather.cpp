@@ -55,11 +55,11 @@ bool showSnow() {
 }
 
 float getIceFade() {
-  return showSnow() ? clamp(w.temp/-5,0.f,1.f) : 0;
+  return showSnow() ? glm::clamp(w.temp/-5,0.f,1.f) : 0;
 }
 
 float getWaterSnow() {
-  return showSnow() ? w.snow * clamp((w.temp+5)/-5,0.f,1.f) : 0;
+  return showSnow() ? w.snow * glm::clamp((w.temp+5)/-5,0.f,1.f) : 0;
 }
 
 float getLightning() {
@@ -73,7 +73,7 @@ float getLightning() {
     lightning += sin(time*i*i*.02f)/lightningIters;
   }
 
-  return clamp(lightning*8-2.9f, 0.f, 1.f);
+  return glm::clamp(lightning*8-2.9f, 0.f, 1.f);
 }
 
 void updateWeatherInner(double duration) {
@@ -102,15 +102,15 @@ void updateWeatherInner(double duration) {
   float targetClouds = randFloat(-1,1) + seasonFactor*.1f - w.pressure;
   float clouds = mix(w.clouds, targetClouds, adur);
   clouds = mix(w.clouds, clouds, 0.25f);
-  w.clouds = clamp(clouds, 0.f, 1.f);
+  w.clouds = glm::clamp(clouds, 0.f, 1.f);
 
   float targetPercip = pow(w.clouds - w.pressure, 2.f);
   if (desert) targetPercip *= targetPercip;
   targetPercip += adur*4*randFloat(-1,1);
   w.percipitation = mix(w.percipitation, targetPercip, adur);
-  w.percipitation = clamp(w.percipitation, 0.f, w.clouds);
+  w.percipitation = glm::clamp(w.percipitation, 0.f, w.clouds);
   w.drought = mix(w.drought, 1-w.percipitation, adur);
-  w.drought = clamp(w.drought, 0.f, 1.f);
+  w.drought = glm::clamp(w.drought, 0.f, 1.f);
   if (w.temp < snowTemp) {
     w.snow += w.percipitation * adur * c(CSnowCollectionRate);
   }
@@ -120,7 +120,7 @@ void updateWeatherInner(double duration) {
   if (time > 0 && time < startTime) {
     w.snow -= adur;
   }
-  w.snow = clamp(w.snow, 0.f, 1.f);
+  w.snow = glm::clamp(w.snow, 0.f, 1.f);
 
   int pressureIters = 4;
   float targetPress = 0;
@@ -128,10 +128,10 @@ void updateWeatherInner(double duration) {
     targetPress += 1.25f*sin(time*i*i)/pressureIters;
   }
   targetPress += (seasonFactor*1-.6f)*.15f;
-  targetPress = clamp(targetPress, -1.f, 1.f);
+  targetPress = glm::clamp(targetPress, -1.f, 1.f);
   w.pressure = mix(w.pressure, targetPress, adur);
   w.pressure += randFloat(-1,1)*adur;
-  w.pressure = clamp(w.pressure, -1.f, 1.f);
+  w.pressure = glm::clamp(w.pressure, -1.f, 1.f);
 
   if (strobeClouds) {
     w.clouds = sin(getCurrentDateTime()*24*5)*.5f+.5f;
@@ -149,7 +149,7 @@ void updateWeatherInner(double duration) {
   float targetSpeed = pow(1-w.pressure,2) * 8.f;
   float nextWindSpeed = mix(windSpeed, targetSpeed, adur);
   nextWindSpeed += randFloat(-1,1)*adur*4;
-  nextWindSpeed = clamp(nextWindSpeed, 0.1f, 20.f);
+  nextWindSpeed = glm::clamp(nextWindSpeed, 0.1f, 20.f);
   vec3 change = vec3(cos(ang), sin(ang), 0);
   change.y += 0.001;
   change *= 24*60*duration * 0.1;
@@ -173,7 +173,7 @@ void updateWeather(double duration) {
   }
 
   float dayFrac = duration / gameDayInRealSeconds;
-  waterTime += clamp(dayFrac, 0.f, .25f/24/60) * (1-getIceFade());
+  waterTime += glm::clamp(dayFrac, 0.f, .25f/24/60) * (1-getIceFade());
   if (waterTime > 4) waterTime -= 4;
 
   renderWeather();
@@ -184,7 +184,7 @@ float getWaterTime() {
 }
 
 float getCurrentRain() {
-  return clamp(w.percipitation - w.snow, 0.f, 1.f);
+  return glm::clamp(w.percipitation - w.snow, 0.f, 1.f);
 }
 
 void moveRain(vec2 amount) {
@@ -273,7 +273,7 @@ void renderWeather() {
 
   if (w.percipitation > 0.1f) {
     setEntityVisible(weatherEntity, true);
-    float opacity = clamp((w.percipitation-0.1f), 0.f, 1.f);
+    float opacity = glm::clamp((w.percipitation-0.1f), 0.f, 1.f);
     //opacity = 1 - opacity*opacity;
     entity->flags &= ~(255 << 23);
     entity->flags |= (int(255*opacity) << 23);

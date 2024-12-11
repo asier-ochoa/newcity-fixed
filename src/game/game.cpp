@@ -405,7 +405,7 @@ void setGameDifficulty(GameDifficulty diff) {
     gameDifficulty = diff;
   }
   SPDLOG_INFO("Game difficulty set to {} ({})",
-      gameDifficulty, difficultyName[gameDifficulty]);
+      static_cast<int>(gameDifficulty), difficultyName[gameDifficulty]);
 }
 
 void setNextGameDifficulty(GameDifficulty diff) {
@@ -569,7 +569,7 @@ bool loadGame(char* filename, bool isAutosave) {
   }
   gameDifficulty = (GameDifficulty)difficulty;
   nextGameDifficulty = gameDifficulty;
-  SPDLOG_INFO("flags {} {}", flags, gameDifficulty);
+  SPDLOG_INFO("flags {} {}", flags, static_cast<int>(gameDifficulty));
   refreshLua();
 
   if (version >= 45) {

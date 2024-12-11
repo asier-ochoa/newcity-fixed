@@ -192,7 +192,7 @@ vector<NewspaperIssueArticle> generateNewspaperArticles(item num) {
       if (code == 0) continue;
       item articleNdx = articlesByCode[code];
       if (articleNdx <= 0 || articleNdx >= scores.size()) continue;
-      scores[articleNdx] = clamp(scores[articleNdx], -1.f, 0.5f);
+      scores[articleNdx] = glm::clamp(scores[articleNdx], -1.f, 0.5f);
     }
   }
 

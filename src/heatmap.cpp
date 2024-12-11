@@ -417,7 +417,7 @@ void applyElevationToPollution() {
 
 void capDensity() {
   float popRatio = popForHM / c(CPopForMaxDensity);
-  popRatio = clamp(popRatio, 0.f, 1.f);
+  popRatio = glm::clamp(popRatio, 0.f, 1.f);
   const float globalCap = mix(0.1f, 1.f, pow(popRatio,0.5));
   HeatMapTile* densi = heatMaps[Density][HeatMapWrite];
   HeatMapTile* prosp = heatMaps[Prosperity][HeatMapWrite];
@@ -555,7 +555,7 @@ void computeHeatMapTotal(HeatMapIndex ndx, HeatMapBufferIndex buffer) {
   //const float standardDeviation =
     //clamp(pow(deviation / (numTiles-1), .5f), 0.001f, 1.0f);
   const float mean = total / count;
-  total = clamp(mean, 0.f, 1.f);
+  total = glm::clamp(mean, 0.f, 1.f);
   heatMapTotalValue[ndx] = total;
 }
 

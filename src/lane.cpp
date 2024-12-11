@@ -124,7 +124,7 @@ void setDefaultTimeEstimate(item ndx) {
       estimate += c(CStopLightMaxPhaseDuration)*.25f/gameDayInRealSeconds;
     }
   }
-  estimate = clamp(estimate, 0.00000000001f, 1.0f/24.f);
+  estimate = glm::clamp(estimate, 0.00000000001f, 1.0f/24.f);
   b->staticTimeEstimate = estimate;
 }
 
@@ -344,7 +344,7 @@ vec3 getLocation(GraphLocation location) {
   if (lbNdx < 1 || lbNdx > laneBlocks->size()) return vec3(0,0,0);
   Lane* lane = getLane(location.lane);
   float length = lane->length;
-  location.dap = clamp(location.dap, 0.f, length);
+  location.dap = glm::clamp(location.dap, 0.f, length);
   return interpolateSpline(lane->spline, location.dap/length);
 }
 
@@ -925,7 +925,7 @@ Spline getLaneSpline(item lane) {
 
 vec3 getLocationV(GraphLocation loc) {
   float length = getLaneLength(loc.lane);
-  float dap = clamp(loc.dap/length, 0.f, 1.f);
+  float dap = glm::clamp(loc.dap/length, 0.f, 1.f);
   return interpolateSpline(getLaneSpline(loc.lane), dap);
 }
 
@@ -1043,7 +1043,7 @@ void swapLanesForVehicles(bool fromSave) {
     } else {
       blk->timeEstimate = mix(blk->timeEstimate, traversalRecord[i], 0.5);
 
-      blk->timeEstimate = clamp(blk->timeEstimate, 0.00000000001f,
+      blk->timeEstimate = glm::clamp(blk->timeEstimate, 0.00000000001f,
           blk->staticTimeEstimate*c(CTraversalRecordMax));
       bool active = blockIsActive_r(i*laneBlockIndexMultiplier);
       if (blk->flags & _laneAlwaysActive) active = true;

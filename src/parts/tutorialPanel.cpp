@@ -131,7 +131,7 @@ Part* tutorialPanel() {
   float widthForTitle = tpWidth;
   float titleWidth = stringWidth(title);
   float titleSpacing = widthForTitle/titleWidth;
-  titleSpacing = clamp(titleSpacing, tpTitleY*.5f, tpTitleY);
+  titleSpacing = glm::clamp(titleSpacing, tpTitleY*.5f, tpTitleY);
   //if (titleSpacing > tpTitleY) titleSpacing = tpTitleY;
   //if (titleSpacing < tpTitleY*.5f) titleSpacing = tpTitleY*.5f;
   //Part* titlePart = r(result, labelCenter(vec2(1,0),

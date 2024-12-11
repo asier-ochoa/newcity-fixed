@@ -164,7 +164,7 @@ void setMaxLandValues(item building) {
   }
   float z = round(getDesignZ(b->design) / 4);
   item xSize = round(d->size.x/tileSize);
-  xSize = clamp(xSize, 0, maxTrackedXSize);
+  xSize = glm::clamp(xSize, 0, maxTrackedXSize);
 
   for (int i = 0; i <= xSize; i++) {
     if (d->minDensity > maxDensity[b->zone][i]) {
@@ -269,7 +269,7 @@ item maybeAddBuilding(item lotNdx) {
   econ = getEcon(bLoc);
   float density = getAdjustedDensity(lot->zone, bLoc);
   float maxDensity = getLotMaxDensity(lotNdx)*.1f+.01f;
-  density = clamp(density, 0.f, maxDensity);
+  density = glm::clamp(density, 0.f, maxDensity);
   float landValue = getAdjustedLandValue(lot->zone, bLoc);
   item design = getRandomDesign(lot->zone, econ, density, landValue);
   //SPDLOG_INFO("maybeAddBuilding design:{} {}", design, econ);
@@ -435,7 +435,7 @@ item addBuilding(item designNdx, item edgeNdx,
 
 const char* buildingLegalMessage(item ndx) {
   Building* building = getBuilding(ndx);
-  if (!building->flags & _buildingExists) {
+  if (!(building->flags & _buildingExists)) {
     return "Building doesn't exist";
   }
   if (building->flags & _buildingComplete) {
@@ -791,7 +791,7 @@ void completeBuilding(item ndx) {
 
 void removeBuilding(item ndx) {
   Building* building = getBuilding(ndx);
-  if (!building->flags & _buildingExists) {
+  if (!(building->flags & _buildingExists)) {
     return;
   }
 
@@ -1275,7 +1275,7 @@ money getCityAssetValue() {
   money result = 0;
   for (int i = 1; i <= buildings->size(); i++) {
     Building* building = getBuilding(i);
-    if (!building->flags & _buildingExists) {
+    if (!(building->flags & _buildingExists)) {
       continue;
     }
 
@@ -1738,7 +1738,7 @@ float getTargetIllumLevel(item buildingNdx) {
       getDesignNumHomes(b->design) * 1;
     targetIllum = numInside*6.f/capacity - getLightLevel()*4;
     targetIllum *= (1-1.25f*getLightLevel());
-    targetIllum = sqrt(clamp(targetIllum, 0.f, 100.f));
+    targetIllum = sqrt(glm::clamp(targetIllum, 0.f, 100.f));
     if (numInside > 20 && targetIllum < 1) targetIllum = 1;
   }
 

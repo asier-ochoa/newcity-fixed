@@ -134,7 +134,7 @@ float getEduLevelLimit(item edu) {
     effectValue[EducationEffect] * getEffectMultiplier(Technology) +
     getStatistic(ourCityEconNdx(), NumColleges) *
     c((FloatConstant)(CMaxHSEduPerCollege+edu-1));
-  result = clamp(result, 0.f, getEduLevelHardLimit(edu));
+  result = glm::clamp(static_cast<float>(result), 0.f, getEduLevelHardLimit(edu));
   return result;
 }
 
@@ -146,7 +146,7 @@ float getEffectMultiplier(item effect, item value) {
   } else if (effect == BusinessEffect) {
     return pow(c(CBusinessUnempBasis), value);
   } else if (effect == Prestige) {
-    return clamp(c(CMaxResidentialDensity) + c(CPrestigeMaxResDensity)*value,
+    return glm::clamp(c(CMaxResidentialDensity) + c(CPrestigeMaxResDensity)*value,
         0.f, 1.f);
   } else if (effect == Environmentalism) {
     return pow(c(CEnvironmentalismPollutionBasis), value);
@@ -273,7 +273,7 @@ char* getMacroEffectDescriptor(item effect) {
   } else if (effect == Prestige) {
     float val = getEffectMultiplier(Prestige, value)*10;
     int num = val;
-    num = clamp(num, 0, 10);
+    num = glm::clamp(num, 0, 10);
 
     if (num < 10) {
       float gap = float(num + 1) - val;
@@ -446,11 +446,11 @@ float getAdjustedDensity(item zone, vec3 loc) {
     //float edu = heatMapGet(Education, loc);
     //float adjEdu = clamp(edu*2.0f, 0.f, unemploymentRate(HSDiploma)*20);
     //adjEdu = clamp(adjEdu, 0.f, 1.f);
-    return clamp(unadjustedDensity*2.5f, 0.f, 1.f);
+    return glm::clamp(unadjustedDensity*2.5f, 0.f, 1.f);
   } else if (zone == ResidentialZone || zone == MixedUseZone) {
     //float adjDensity = clamp(unadjustedDensity, 0.f,
         //effectValue[Prestige]/25.f);
-    return clamp(unadjustedDensity, 0.f, getEffectMultiplier(Prestige));
+    return glm::clamp(unadjustedDensity, 0.f, getEffectMultiplier(Prestige));
   } else {
     return unadjustedDensity;
   }

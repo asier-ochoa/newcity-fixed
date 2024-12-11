@@ -172,7 +172,7 @@ Part* chart(vec2 start, vec2 size, item econ, Statistic stat,
       min = max*.8f;
     } else {
       min -= (max-min)*0.1;
-      min = clamp(min, 0.f, max);
+      min = glm::clamp(min, 0.f, max);
     }
   }
 
@@ -255,7 +255,7 @@ Part* chart(vec2 start, vec2 size, item econ, Statistic stat,
   float prevFraction = 1 - (series.values[startT] - min) / (max - min);
   float xYDiff = colorGoldGrad0.y - colorGoldGrad1.y;
   float zeroFrac = 1 + min / (max - min);
-  float clampedZeroFrac = clamp(zeroFrac, 0.001f, 1.f);
+  float clampedZeroFrac = glm::clamp(zeroFrac, 0.001f, 1.f);
   float zeroY = inH * zeroFrac;
   int year = series.startDate/oneYear-2;
 

@@ -337,7 +337,7 @@ vec3 pointOfIntersection(Line l0, Line l1) {
   vec3 t = (b0 - a0);
   float detA = determinant(mat3(t, _B, crossVec));
 
-  float t0 = clamp(detA/denom, 0.f, magA);
+  float t0 = glm::clamp(detA/denom, 0.f, magA);
 
   vec3 pA = a0 + (_A * t0); // Projected closest point on segment A
 

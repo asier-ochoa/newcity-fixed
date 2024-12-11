@@ -149,7 +149,7 @@ void assignBuildingTexture(item buildingNdx) {
       item illumS = package->illumTextures.size();
       if (illumS > 0) {
         float targetIllum = getTargetIllumLevel(buildingNdx);
-        targetIllum = round(clamp(targetIllum, 0.f, float(illumS-1)));
+        targetIllum = round(glm::clamp(targetIllum, 0.f, float(illumS-1)));
 
         item illumNdx = package->illumTextures[targetIllum];
         Texture* albedoTex = getTexture(albedoNdx);

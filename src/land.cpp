@@ -1271,7 +1271,7 @@ float setNaturalHeight(vec3 p, float radius, bool smooth) {
       if (smooth) {
         float smoothDist = distFromCener/radius*.5f;
         smoothDist = pow(smoothDist, 0.1);
-        smoothDist = clamp(smoothDist, 0.9f, 1.f);
+        smoothDist = glm::clamp(smoothDist, 0.9f, 1.f);
         z = mix(p.z, natZ, smoothDist);
 
       } else {

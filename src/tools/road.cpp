@@ -474,8 +474,8 @@ void renderRoadCursor() {
       setEntityVisible(builderTextEntity, true);
 
       char* resString;
-      char* moneyString = "";
-      char* speedString = "";
+      const char* moneyString = "";
+      const char* speedString = "";
       if (cost > 1000) {
         char* mStr = printMoneyString(cost);
         moneyString = sprintf_o(" %s to Repair", mStr);
@@ -490,10 +490,10 @@ void renderRoadCursor() {
       renderString(textMesh, resString,
           vec3(tx-fontSize,ty-fontSize*.5,tz), fontSize);
       if (cost > 1000) {
-        free(moneyString);
+        free((void *) moneyString);
       }
       if (maxSpeed < postedSpeed) {
-        free(speedString);
+        free((void *) speedString);
       }
       free(resString);
     }

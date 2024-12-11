@@ -174,7 +174,7 @@ inline void collectEntity(item ndx, Cull cull, DrawBuffer* b) {
   if (!map && !capture) setEntityCulled_g(ndx, mesh == 0);
   if (mesh == 0) return;
   if (mesh > 1000000) {
-    SPDLOG_WARN("bad mesh {} {}", mesh, e->shader);
+    SPDLOG_WARN("bad mesh {} {}", mesh, static_cast<int>(e->shader));
     return;
   }
 
@@ -352,7 +352,7 @@ void setupInstancedAttribs() {
   for (int i = 0; i < 4; i++) {
     glEnableVertexAttribArray(i+baseAttrib);
     glVertexAttribPointer(i+baseAttrib, 4,
-        GL_FLOAT, GL_FALSE, dataSize, (void*)(i * vec4Size));
+        GL_FLOAT, GL_FALSE, dataSize, (void*)(static_cast<uint64_t>(i * vec4Size)));
     glVertexAttribDivisor(i+baseAttrib, 1);
   }
 
@@ -384,7 +384,7 @@ void setupVertexAttribs() {
     GL_FLOAT,             // type
     GL_FALSE,             // normalized?
     strideSize,           // stride
-    (void*)(offsetSize*0) // array buffer offset
+    (void*)(static_cast<uint64_t>(offsetSize*0)) // array buffer offset
   );
 
   //normals
@@ -394,7 +394,7 @@ void setupVertexAttribs() {
     GL_FLOAT,             // type
     GL_FALSE,             // normalized?
     strideSize,           // stride
-    (void*)(offsetSize*1) // array buffer offset
+    (void*)(static_cast<uint64_t>(offsetSize*1)) // array buffer offset
   );
 
   //texture
@@ -404,7 +404,7 @@ void setupVertexAttribs() {
     GL_FLOAT,             // type
     GL_FALSE,             // normalized?
     strideSize,           // stride
-    (void*)(offsetSize*2) // array buffer offset
+    (void*)(static_cast<uint64_t>(offsetSize*2)) // array buffer offset
   );
 }
 

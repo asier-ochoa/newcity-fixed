@@ -199,7 +199,7 @@ float scoreFreight(item ndx) {
   float score = c(CFreightBaseScore);
   float timeSinceFreightOut = getCurrentDateTime() - b->lastCustomerTime;
   score += energy * c(CFreightA) *
-    clamp(timeSinceFreightOut-c(CFreightB), -c(CFreightB), c(CFreightC));
+    glm::clamp(timeSinceFreightOut-c(CFreightB), -c(CFreightB), c(CFreightC));
   score += dayProximity(CFreightDayProxA,
       CFreightDayProxB, CFreightDayProxC, energy);
   return score;
@@ -214,7 +214,7 @@ float scoreGovernment(item ndx) {
   float energy = person->energy;
   float score = c(CAmenityBaseScore);
   if (person->flags & _personIsTourist) score = c(CAmenityBaseScoreTourist);
-  //float openScore = clamp(num*c(CAmenityOpenPerPop)/pop,
+  //float openScore = glm::clamp(num*c(CAmenityOpenPerPop)/pop,
       //0.f, c(CAmenityOpenMax));
   //float score = c(CAmenityBaseScore) + openScore;
   //if (getFamily(person->family)->home == 0) score += c(CAmenityHomeless);

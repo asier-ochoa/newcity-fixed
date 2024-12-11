@@ -361,7 +361,7 @@ item getBuildingTexture(item ndx, bool isSwap) {
   BuildingTexture* tex = buildingTextures.get(result);
   item numIllumTextures = tex->illumTextures.size();
   float targetIllum = getTargetIllumLevel(ndx);
-  targetIllum = clamp(targetIllum, 0.f, float(numIllumTextures-1));
+  targetIllum = glm::clamp(targetIllum, 0.f, float(numIllumTextures-1));
 
   //SPDLOG_INFO("{} illum{} numIllum{}",
       //ndx, targetIllum, numIllumTextures);

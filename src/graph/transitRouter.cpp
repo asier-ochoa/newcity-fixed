@@ -110,7 +110,7 @@ void swapTransitRouterData_g() {
         //float cost = mix(leg.timeEstimate, leg.timeRecord,
             //c(CRoutingTrafficAwareness));
         float cost = leg.timeEstimate;
-        cost = clamp(cost, 0.0000000001f, 1.f/24.f);
+        cost = glm::clamp(cost, 0.0000000001f, 1.f/24.f);
         legCost_r.push_back(cost);
 
         currentLegSlot ++;

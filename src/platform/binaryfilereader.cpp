@@ -272,7 +272,7 @@ bool BinaryFileReader::readHeader(FileSectorHeader *header) {
   int h = 2; // Read first two bytes already
   headerData[(int)HeaderByte::Start] = fileSectorHeaderStart;
   headerData[(int)HeaderByte::HeaderSize] = headerSize;
-  for (h; h < headerSize; h++) {
+  for (; h < headerSize; h++) {
     headerData[h] = fread_uint8_t(&bfr_fileBuffer);
     bfr_pos++;
   }
@@ -359,7 +359,7 @@ bool BinaryFileReader::readSectorKeyBind(FileSector<KeyBind> &sector) {
     SPDLOG_INFO("BinaryFileReader: Preparing to read {} elements of data type {}", numElements, dataType);
   }
 
-  for (e; e < numElements; e++) {
+  for (; e < numElements; e++) {
     if (!BinaryFileReader::readKeyBind(sector)) {
       SPDLOG_ERROR("BinaryFileReader: Error pushing data to sector at index {}", e);
       continue;
@@ -372,7 +372,7 @@ bool BinaryFileReader::readSectorKeyBind(FileSector<KeyBind> &sector) {
         err++;
         continue;
       }
-      SPDLOG_INFO("BinaryFileReader: Read out keybind as {} and {}", chk->action, chk->key);
+      SPDLOG_INFO("BinaryFileReader: Read out keybind as {} and {}", static_cast<int>(chk->action), static_cast<int>(chk->key));
       bindStr += "(" + std::to_string(chk->action) + "," + std::to_string(chk->key) + ")";
       if (e < numElements-1) {
         bindStr += ",\n";

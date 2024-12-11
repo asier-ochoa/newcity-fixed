@@ -28,8 +28,8 @@
 #include "spdlog/spdlog.h"
 #include <unordered_map>
 
-#include <experimental/filesystem>
-using namespace std::experimental::filesystem;
+#include <filesystem>
+using namespace std::filesystem;
 
 vector<Design> designs;
 vector<Design> designerUndoHistory;
@@ -510,7 +510,7 @@ money getDesignValue(item designNdx) {
 
   float commonness = designCommonness(designNdx);
   float commonnessFactor = 1-commonness/c(CMaxDesignCommonness);
-  commonnessFactor = clamp(commonnessFactor, 0.f, 1.f);
+  commonnessFactor = glm::clamp(commonnessFactor, 0.f, 1.f);
   if (d->numBuildings < 20) commonnessFactor = 1;
 
   float validDesignFactor = bool(d->flags & _designEnabled) &&

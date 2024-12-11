@@ -67,7 +67,7 @@ SteamAPICall_t steamws_itemDelete(PublishedFileId_t id) {
 bool steamws_itemDownload(PublishedFileId_t id, bool highPriority) {
   if(!steam_isActive()) {
     SPDLOG_ERROR("Attempted to download Steam Workshop item when Steam was inactive");
-    return NULL;
+    return 0;
   }
 
   return SteamUGC()->DownloadItem(id, highPriority);

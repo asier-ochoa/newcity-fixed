@@ -65,7 +65,7 @@ bool conCallbackCameraInfo(std::string data) {
 bool conCallbackCapture(std::string data) {
   item ndx = 0;
   char* fbStr = strdup_s(data.c_str());
-  char* filenameStr = fbStr;
+  const char* filenameStr = fbStr;
   for (; filenameStr[0] != '\0' && filenameStr[0] != ' '; filenameStr++);
   if (filenameStr[0] == ' ') filenameStr++;
   if (filenameStr[0] == '\0') filenameStr = "capture.png";
@@ -113,7 +113,7 @@ bool conCallbackDebug(std::string data) {
   else if (data[0] == 't' || data[0] == 'T' || data[0] == '1')
     setDebugMode(true);
   else
-    consolePrintLine(sprintf_o("Invalid value for debug flag %s", data));
+    consolePrintLine(sprintf_o("Invalid value for debug flag %s", data.c_str()));
 
   if (debugMode() != currentDebug) {
     consolePrintLine(sprintf_o("Debug is now: %s",
@@ -795,7 +795,7 @@ bool conCallbackSongEnable(std::string data) {
   else if (data[0] == 't' || data[0] == 'T' || data[0] == '1')
     setSongsEnabled(true);
   else
-    consolePrintLine(sprintf_o("Invalid value for songs enabled flag %s", data));
+    consolePrintLine(sprintf_o("Invalid value for songs enabled flag %s", data.c_str()));
 
   if (getSongsEnabled() != currentSongsEnabled) {
     consolePrintLine(sprintf_o("Music is now: %s",
@@ -847,13 +847,13 @@ bool conCallbackTestFileWrite(std::string data) {
   FileSector<KeyBind> test(true, FileDataType::DataKeyBind, (ubyte)InputAction::NumActions);
 
   int i = 0;
-  for (i; i < numActions; i++) {
+  for (; i < numActions; i++) {
     KeyBind bind = getKeyBind(i);
     if (!test.push(bind)) {
       SPDLOG_ERROR("Error pushing data to test sector - i:{}", i);
       break;
     }
-    SPDLOG_INFO("Pushed ({},{})", bind.action, bind.key);
+    SPDLOG_INFO("Pushed ({},{})", static_cast<int>(bind.action), bind.key);
   }
 
   SPDLOG_INFO("Pushed {} elements into file sector; test.count() {}", i, test.count());
@@ -974,7 +974,7 @@ bool conCallbackTutorialInfo(std::string data) {
   TutorialState* ptr = getTutorialStatePtr();
   std::vector<TutorialAction> actions = ptr->actions();
   SPDLOG_INFO("Tutorial State Info: tutorialActive - {}, showTutorial - {}, timer - {}, camera time - {}", ptr->tutorialActive(), isTutorialPanelOpen(), ptr->timerTarget(), getCameraTime());
-  SPDLOG_INFO("Tutorial State Actions: {} {} {} {}", actions[0].code, actions[1].code, actions[2].code, actions[3].code);
+  SPDLOG_INFO("Tutorial State Actions: {} {} {} {}", static_cast<int>(actions[0].code), static_cast<int>(actions[1].code), static_cast<int>(actions[2].code), static_cast<int>(actions[3].code));
   return true;
 }
 

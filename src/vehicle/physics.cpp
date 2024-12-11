@@ -498,7 +498,7 @@ bool updateOneVehicle(item ndx, float duration) {
     } else {
       float physLength = getLaneLength(physc.loc.lane);
       float target = tloc.dap - trailerDist + physLength;
-      target = clamp(target, 0.f, physLength);
+      target = glm::clamp(target, 0.f, physLength);
       float advance = target - physc.loc.dap;
       if (advance > 0) {
         physc = moveInLane(ndx, LLPhysical, advance);
@@ -755,7 +755,7 @@ bool updateOneVehicle(item ndx, float duration) {
     endImpediment.dist = nextStepNdx - pilot.loc.dap;
     endImpediment.speed = 0;
     impediment = combine(impediment, endImpediment);
-    nextStepNdx = clamp(float(nextStepNdx), 0.f, laneLength-10);
+    nextStepNdx = glm::clamp(float(nextStepNdx), 0.f, laneLength-10);
   }
 
   float targetSpeed = getBlockSpeed(physc.loc.lane)*c(CVehicleSpeed);
@@ -787,7 +787,7 @@ bool updateOneVehicle(item ndx, float duration) {
     float backpressureFactor = blocksCapacity/vehiclesInBlks *
       c(CBackpressureFactor) - c(CBackpressureBias);
     backpressureFactor = mix(1.f, backpressureFactor, dapRatio);
-    backpressureFactor = clamp(backpressureFactor, 0.f, 1.f);
+    backpressureFactor = glm::clamp(backpressureFactor, 0.f, 1.f);
     //SPDLOG_INFO("backpressure {} {} {} {} {}", blocksCapacity,
       //vehiclesInBlks, backpressureFactor, nextStep, nextBlk2);
     advance *= backpressureFactor;
@@ -796,7 +796,7 @@ bool updateOneVehicle(item ndx, float duration) {
   // Apply acceleration
   float maxSpeed = speed +
     c(CVehicleAcceleration) * duration;
-  advance = clamp(advance, 0.f, maxSpeed * duration);
+  advance = glm::clamp(advance, 0.f, maxSpeed * duration);
 
   pilot = moveInLane(ndx, LLPilot, advance);
   physc = moveInLane(ndx, LLPhysical, advance);
@@ -956,7 +956,7 @@ void setTripLimit(item ndx) {
     }
   }
 
-  tripLimit = clamp(tripLimit, float(oneHour), c(CMaxVehicleAge));
+  tripLimit = glm::clamp(tripLimit, float(oneHour), c(CMaxVehicleAge));
   vTripLimit.set(ndx, tripLimit);
 }
 

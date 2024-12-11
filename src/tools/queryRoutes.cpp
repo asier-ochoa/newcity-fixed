@@ -204,7 +204,7 @@ void routes_mouse_move_callback(InputEvent event) {
     cursorSet[atEnd] = true;
     Lane* lane = getLane(loc.lane);
     LaneBlock* blk = getLaneBlock(loc.lane);
-    loc.dap = clamp(loc.dap, c(CTileSize), lane->length - c(CTileSize));
+    loc.dap = glm::clamp(loc.dap, c(CTileSize), lane->length - c(CTileSize));
     loc.dap = round(loc.dap/c(CTileSize)) * c(CTileSize);
     cursorGraphLoc[atEnd] = loc;
     cursorLoc[atEnd] = getLocation(loc);

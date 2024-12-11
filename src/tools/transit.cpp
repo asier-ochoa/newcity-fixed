@@ -138,7 +138,7 @@ void transit_move(InputEvent event) {
 
   Lane* lane = getLane(loc.lane);
   LaneBlock* blk = getLaneBlock(loc.lane);
-  loc.dap = clamp(loc.dap, c(CTileSize), lane->length - c(CTileSize));
+  loc.dap = glm::clamp(loc.dap, c(CTileSize), lane->length - c(CTileSize));
   loc.dap = round(loc.dap/c(CTileSize)) * c(CTileSize);
 
   if (blk->graphElements[1] > 0) {

@@ -426,7 +426,7 @@ item addTransitVehicle_g(item lineNdx, Route* route) {
   if (startLane == 0) return 0;
 
   vector<item> ndxes;
-  int numNdxes = clamp(float(line->maxCars), 1.f, c(CMaxCarsPerVehicle));
+  int numNdxes = glm::clamp(float(line->maxCars), 1.f, c(CMaxCarsPerVehicle));
   for (int i = 0; i < numNdxes; i++) {
     ndxes.push_back(vehicles->create());
   }
@@ -647,12 +647,12 @@ float getEffectiveTrafficRate() {
     return c(CTrafficRate1M);
 
   } else if (pop > 100000) {
-    float popFactor = clamp((pop-100000.f)/900000.f, 0.f, 1.f);
+    float popFactor = glm::clamp((pop-100000.f)/900000.f, 0.f, 1.f);
     popFactor = 1-pow(1-popFactor, 4);
     return mix(c(CTrafficRate100K), c(CTrafficRate1M), popFactor);
 
   } else {
-    float popFactor = clamp(pop/100000.f, 0.f, 1.f);
+    float popFactor = glm::clamp(pop/100000.f, 0.f, 1.f);
     popFactor = 1-pow(1-popFactor, 4);
     return mix(c(CTrafficRate0), c(CTrafficRate100K), popFactor);
   }

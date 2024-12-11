@@ -105,7 +105,7 @@ item getPaletteAnimationFrame() {
 
 void updateAnimation(double duration) {
   float dayFrac = duration / gameDayInRealSeconds;
-  animationTime += clamp(dayFrac, 0.f, .25f/24/60);
+  animationTime += glm::clamp(dayFrac, 0.f, .25f/24/60);
   if (animationTime > 4) animationTime -= 4;
 
   paletteAnimationFrameFrac += duration * c(CPaletteAnimationFramerate);
@@ -371,7 +371,7 @@ LightInformation getLightInformation() {
   double moonTheta = (dateTime/4-0.5)*pi_o*2;
   double cloudDim = 1-w.clouds*.8;
   if (isPresimulating()) cloudDim = 1;
-  double lightPower0 = clamp(sunHeight * cloudDim, 0., 1.);
+  double lightPower0 = glm::clamp(sunHeight * cloudDim, 0., 1.);
   double lightPower1 = 1 - lightPower0;
   double dirFactor = std::min(std::max(0.0, sunHeight + goldAmount), 0.8);
   double skyBright = std::max(0.1, cloudDim*(1+cos(timeTheta))*.4f);
@@ -386,7 +386,7 @@ LightInformation getLightInformation() {
     //if (pos > 2.5) pos = 2.5;
     vec3 color = vec3(0,0,0);
     for (int j = 0; j < 4; j++) {
-      color += skyColor[j] * clamp(float(1-abs(j - pos)), 0.f, 1.f);
+      color += skyColor[j] * glm::clamp(float(1-abs(j - pos)), 0.f, 1.f);
     }
     color = color * float(1-cloudEffect) + vec3(1,1,1)*float(cloudEffect);
     color *= skyBright;
@@ -396,7 +396,7 @@ LightInformation getLightInformation() {
   */
 
   result.skyColor = vec3(goldAmount, skyBright, w.clouds);
-  result.skyColor = clamp(result.skyColor, 0.f, 1.f);
+  result.skyColor = glm::clamp(result.skyColor, 0.f, 1.f);
 
   /*
   result.color = (dvec3(1,1,1)*lightPower0 + dvec3(0.1, 0.1, 0.8)*lightPower1)
@@ -404,7 +404,7 @@ LightInformation getLightInformation() {
     */
 
   float x = 5 - 4*skyBright;
-  float y = 49 + 8*clamp(goldAmount, 0., 1.);
+  float y = 49 + 8*glm::clamp(goldAmount, 0., 1.);
   result.color = vec3(
       samplePixel(getPaletteImage(), x/paletteSize, y/paletteSize));
   result.color += vec3(1,1,1)*float(lightning*.2f);
@@ -425,7 +425,7 @@ LightInformation getLightInformation() {
   double rx = result.direction.x;
   double ry = result.direction.y;
   double rz = result.direction.z;
-  result.color *= clamp(2 - rz / (sqrt(rx*rx + ry*ry) + 1.f), .5, 2.);
+  result.color *= glm::clamp(2 - rz / (sqrt(rx*rx + ry*ry) + 1.f), .5, 2.);
   result.color *= brightness*2.4+.1f;
   //result.color *= 0.5f;
 

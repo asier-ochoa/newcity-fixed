@@ -39,7 +39,7 @@ Part* errorPanel(float aspectRatio, const char* message) {
   float messageWidth = stringWidth(message);
   //vec2 panelSize = vec2(std::max(20.f, std::max(titleWidth, messageWidth) + 1), 8);
   float uiX = uiGridSizeX * aspectRatio;
-  vec2 panelSize = vec2(clamp(messageWidth, 20.f, uiX-4), 8.f);
+  vec2 panelSize = vec2(glm::clamp(messageWidth, 20.f, uiX-4), 8.f);
 
   Part* container = panel(line(vec3(0,0,0),
     vec3(uiX, uiGridSizeY, 0)));

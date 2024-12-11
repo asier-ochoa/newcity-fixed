@@ -121,7 +121,8 @@ void checkOpenGLError() {
   // GL error code should be checked in a loop until it returns GL_NO_ERROR
   while (errorCode != GL_NO_ERROR) {
     errorString = gluErrorString(errorCode);
-    SPDLOG_ERROR("OpenGL error {} reported ({}/{}): {}", errorCode, i, maxGLErrorDepth, errorString != NULL ? errorString : (const GLubyte*)"Unknown error string" );
+    // TODO: Fix and uncomment
+//    SPDLOG_ERROR("OpenGL error {} reported ({}/{}): {}", errorCode, i, maxGLErrorDepth, errorString != NULL ? errorString : (const GLubyte*)"Unknown error string" );
 
     // At max depth const for error depth, break out of loop and mark in log appropriately
     if (i >= maxGLErrorDepth) {
@@ -392,7 +393,7 @@ void computeCameraMatricies(Camera* camera, vec3 mirror, float angle,
   if (c(CMeshQuality) <= 0) {
     camera->resolutionDistance = 50000;
   } else {
-    camera->resolutionDistance = clamp(camera->distance *
+    camera->resolutionDistance = glm::clamp(camera->distance *
         pow(aspectFactor,.5) * resolutionDistanceMult / c(CMeshQuality),
       0.1, 50000.);
   }
@@ -821,7 +822,7 @@ int initGraphics() {
 
   SPDLOG_INFO("Monitor: {}, Mode: {}x{}@{}Hz, nextWindowMode: {}",
     monitor != 0, mode->width, mode->height,
-    mode->refreshRate, nextWindowMode);
+    mode->refreshRate, static_cast<int>(nextWindowMode));
 
   // Open a window and create its OpenGL context
   currentWindowMode = nextWindowModeBack = nextWindowMode;
@@ -888,7 +889,7 @@ int initGraphics() {
 
   int err = glfwGetError(NULL);
   if (err != GLFW_NO_ERROR) {
-    handleError("GLFW error: %s", std::to_string(err));
+    handleError("GLFW error: %s", std::to_string(err).c_str());
   }
 
   setWindowState();
@@ -900,10 +901,11 @@ int initGraphics() {
     handleError("Failed to initialize GLEW");
   }
 
-  SPDLOG_INFO("GL version: {}", glGetString(GL_VERSION));
-  SPDLOG_INFO("GL vender: {}", glGetString(GL_VENDOR));
-  SPDLOG_INFO("GL renderer: {}", glGetString(GL_RENDERER));
-  SPDLOG_INFO("GLSL version: {}", glGetString(GL_SHADING_LANGUAGE_VERSION));
+  // TODO: FIX and uncomment
+//  SPDLOG_INFO("GL version: {}", glGetString(GL_VERSION));
+//  SPDLOG_INFO("GL vender: {}", glGetString(GL_VENDOR));
+//  SPDLOG_INFO("GL renderer: {}", glGetString(GL_RENDERER));
+//  SPDLOG_INFO("GLSL version: {}", glGetString(GL_SHADING_LANGUAGE_VERSION));
   #ifdef __linux__
     SPDLOG_INFO("registering debug callback\n");
     glDebugMessageCallback((GLDEBUGPROC)debugCallback, NULL);
@@ -1050,7 +1052,7 @@ void updateCamera(double duration) {
       (cameraTarget.target.y-mapSize-mapBuffer);
 
   double alpha = c(CCameraLag) == 0 ? 1 :
-    clamp(duration/c(CCameraLag), 0., 0.2);
+    glm::clamp(duration/c(CCameraLag), 0., 0.2);
 
   camera.light = getLightInformation();
   if (isUndergroundView()) {
@@ -1345,6 +1347,7 @@ Camera getCurrentCamera_r() {
     case MainPerspective: return cameraBack;
     case SatMapPerspective: return mapCameraBack;
     case CapturePerspective: return captureCameraBack;
+    case numPerspectives: break;
   }
   handleError("Invalid Perspective");
   return cameraBack;
@@ -1355,6 +1358,7 @@ Camera getCurrentCamera_g() {
     case MainPerspective: return camera;
     case SatMapPerspective: return mapCamera;
     case CapturePerspective: return captureCamera;
+    case numPerspectives: break;
   }
   handleError("Invalid Perspective");
   return camera;

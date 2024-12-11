@@ -467,7 +467,7 @@ bool writeInputFile() {
   // Populate FileSector data structure with keybinds
   FileSector<KeyBind> kbSector(true, FileDataType::DataKeyBind, (ubyte)InputAction::NumActions);
   int i = 0;
-  for (i; i < numActions; i++) {
+  for (; i < numActions; i++) {
     KeyBind bind = getKeyBind(i);
     if (!kbSector.push(bind)) {
       SPDLOG_ERROR("Error pushing data to sector - i:{}", i);
@@ -593,9 +593,9 @@ KeyBind getKeyBind(int index) {
     return KeyBind();
   }
 
-  if (keymap == 0) {
-    return KeyBind();
-  }
+//  if (keymap == 0) {
+//    return KeyBind();
+//  }
 
   return keymap[index];
 }
@@ -956,7 +956,7 @@ void detectKeyCollisionsAll(bool report) {
 
 bool unbindAction(InputAction act, bool report) {
   if (act < 0 || act >= InputAction::NumActions) {
-    SPDLOG_ERROR("Attempted to unbind out-of-bounds action {}", act);
+    SPDLOG_ERROR("Attempted to unbind out-of-bounds action {}", static_cast<int>(act));
     return false;
   }
 
@@ -977,7 +977,7 @@ bool unbindAction(InputAction act, bool report) {
 
 bool bindKeyToAction(InputAction act, int32_t key, bool report) {
   if (act < 0 || act >= InputAction::NumActions) {
-    SPDLOG_ERROR("Attempted to bind key {} to out-of-bounds action {}", getKeyStr(key), act);
+    SPDLOG_ERROR("Attempted to bind key {} to out-of-bounds action {}", getKeyStr(key), static_cast<int>(act));
     return false;
   }
 
@@ -987,7 +987,7 @@ bool bindKeyToAction(InputAction act, int32_t key, bool report) {
   }
 
   if (!isKeyValid(key)) {
-    SPDLOG_ERROR("Attempted to bind invalid key {} to action {}", key, act);
+    SPDLOG_ERROR("Attempted to bind invalid key {} to action {}", key, static_cast<int>(act));
     return false;
   }
 

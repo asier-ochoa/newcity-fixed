@@ -132,7 +132,7 @@ void steamws_core::OnCreateNewItem(CreateItemResult_t *callback, bool failed) {
 
   EResult result = callback->m_eResult;
   if(result != k_EResultOK) {
-    SPDLOG_ERROR("OnCreateNewItem result was not OK ({})", result);
+    SPDLOG_ERROR("OnCreateNewItem result was not OK ({})", static_cast<int>(result));
     this->setFailed();
     return;
   }
@@ -173,7 +173,7 @@ void steamws_core::OnDownloadSubscribedItem(DownloadItemResult_t *callback, bool
 
   EResult result = callback->m_eResult;
   if(result != k_EResultOK) {
-    SPDLOG_ERROR("OnDownloadSubscribedItem result was not OK ({})", result);
+    SPDLOG_ERROR("OnDownloadSubscribedItem result was not OK ({})", static_cast<int>(result));
     // Don't set failed, this may not be directly in response to an invoked steamws_action
     return;
   }
@@ -238,7 +238,7 @@ void steamws_core::OnReceiveUGCQuery(SteamUGCQueryCompleted_t *callback, bool fa
 
   EResult result = callback->m_eResult;
   if(result != k_EResultOK) {
-    SPDLOG_ERROR("OnReceiveUGCQuery result was not OK ({})", result);
+    SPDLOG_ERROR("OnReceiveUGCQuery result was not OK ({})", static_cast<int>(result));
     this->setFailed();
     return;
   }
@@ -265,7 +265,7 @@ void steamws_core::OnSubscribeToItem(RemoteStorageSubscribePublishedFileResult_t
 
   EResult result = callback->m_eResult;
   if(result != k_EResultOK) {
-    SPDLOG_ERROR("OnSubscribeToItem result was not OK ({})", result);
+    SPDLOG_ERROR("OnSubscribeToItem result was not OK ({})", static_cast<int>(result));
     this->setFailed();
     return;
   }
@@ -291,7 +291,7 @@ void steamws_core::OnUnsubscribeFromItem(RemoteStorageUnsubscribePublishedFileRe
 
   EResult result = callback->m_eResult;
   if(result != k_EResultOK) {
-    SPDLOG_ERROR("OnUnsubscribeFromItem result was not OK ({})", result);
+    SPDLOG_ERROR("OnUnsubscribeFromItem result was not OK ({})", static_cast<int>(result));
     this->setFailed();
     return;
   }
@@ -317,7 +317,7 @@ void steamws_core::OnUpdateItem(SubmitItemUpdateResult_t *callback, bool failed)
 
   EResult result = callback->m_eResult;
   if(result != k_EResultOK) {
-    SPDLOG_ERROR("OnSubmitItemUpdate result was not OK ({})", result);
+    SPDLOG_ERROR("OnSubmitItemUpdate result was not OK ({})", static_cast<int>(result));
     this->setFailed();
     return;
   }
@@ -477,8 +477,8 @@ void steamws_core::MoveSubbedItemsToGameDir() {
         tagPath = steamws_getLocalPathEnumFromTag(itemTags[i]);
         sourceDir = workshopNewCityContentPath + "/" + workshopItemSubfolders[f];
         localDirForTag = steamws_getLocalRelativePath(tagPath) + "/" + itemNames[i];
-        if(!copyDir(sourceDir, localDirForTag, std::experimental::filesystem::copy_options::overwrite_existing 
-          | std::experimental::filesystem::copy_options::recursive)) {
+        if(!copyDir(sourceDir, localDirForTag, std::filesystem::copy_options::overwrite_existing
+          | std::filesystem::copy_options::recursive)) {
           SPDLOG_ERROR("Error copying Steam Workshop item dir from source ({}) to game dir staging ({})", sourceDir, localDirForTag);
         } else {
           SPDLOG_INFO("Successfully copied Steam Workshop item dir from source ({}) to game dir staging ({})", sourceDir, localDirForTag);
@@ -865,8 +865,8 @@ bool steamws_StageItemData(UGCUpdateHandle_t handle, PublishedFileId_t id) {
   if(!isMod) {
     // itemDestPath += file.nameAndExt();
     if (isDesign) {
-      if (!copyDir(itemPath, itemDestPath, std::experimental::filesystem::copy_options::overwrite_existing |
-        std::experimental::filesystem::copy_options::recursive)) {
+      if (!copyDir(itemPath, itemDestPath, std::filesystem::copy_options::overwrite_existing |
+        std::filesystem::copy_options::recursive)) {
         SPDLOG_ERROR("Error copying design (Src: {}) (Dest: {})", itemPath, itemDestPath);
         return false;
       }
@@ -876,8 +876,8 @@ bool steamws_StageItemData(UGCUpdateHandle_t handle, PublishedFileId_t id) {
     std::string modDestPath = itemDestPath + file.name + "/";
     makeDirectory(modDestPath.c_str());
 
-    if(!copyDir(itemPath, modDestPath, std::experimental::filesystem::copy_options::overwrite_existing |
-      std::experimental::filesystem::copy_options::recursive)) {
+    if(!copyDir(itemPath, modDestPath, std::filesystem::copy_options::overwrite_existing |
+      std::filesystem::copy_options::recursive)) {
       SPDLOG_ERROR("Error copying mod (Src: {}) (Dest: {})", itemPath, modDestPath);
       return false;
     }

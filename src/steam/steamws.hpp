@@ -190,7 +190,7 @@ public:
   steamws_action getActiveAction() { return _activeAction; }
   steamws_action setActiveAction(steamws_action act) { 
     _activeAction = act;
-    SPDLOG_INFO("Steam Workshop state action set to {}", _activeAction); 
+    SPDLOG_INFO("Steam Workshop state action set to {}", static_cast<int>(_activeAction));
     return _activeAction; 
   }
   void clearActiveAction() { setActiveAction(steamws_action::NoAction); }

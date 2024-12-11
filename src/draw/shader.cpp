@@ -250,17 +250,17 @@ void draw(Shader s) {
   float time = getAnimationTime();
   float windSpeed = length(w.wind)/15.f;
   float tide = cos(pi_o*.5f*(time-.5f))*5 - 5;
-  float illuminationStrength = clamp(.8 - light.level, 0., 1.);
+  float illuminationStrength = glm::clamp(.8 - light.level, 0., 1.);
   illuminationStrength *= 2;
   if (!isMap && getHeatMap_d() == TrafficHeatMap) illuminationStrength = 2;
-  if (s == VehicleShader) illuminationStrength = clamp(illuminationStrength, .5f, 1.f);
+  if (s == VehicleShader) illuminationStrength = glm::clamp(illuminationStrength, .5f, 1.f);
 
   if (getGameMode() != ModeGame && getLightSeason() > 3) {
     w.snow = (getLightSeason()-3)*2.f;
   }
   float snow = c(CRenderSnow) && isShowWeather() ? w.snow : 0;
 
-  float rain = isShowWeather() ? clamp(w.percipitation - 0.1f, 0.f, 1.f) : 0.f;
+  float rain = isShowWeather() ? glm::clamp(w.percipitation - 0.1f, 0.f, 1.f) : 0.f;
   if (s == WaterShader) {
     if (getGameMode() == ModeGame) {
       time = getWaterTime();
@@ -271,9 +271,9 @@ void draw(Shader s) {
       windSpeed = 0;
     }
   }
-  snow = clamp(snow, 0.f, 1.f);
+  snow = glm::clamp(snow, 0.f, 1.f);
 
-  float pollution = 0.1f * clamp(float(light.level)*2-.5f, 0.2f, 1.f);
+  float pollution = 0.1f * glm::clamp(float(light.level)*2-.5f, 0.2f, 1.f);
 
   uint32_t globalFlags = 0;
   if (isMap) globalFlags |= _shaderGlobalIsMap;

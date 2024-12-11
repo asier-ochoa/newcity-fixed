@@ -45,7 +45,7 @@ void addMessage(MessageType type, item object) {
 // For messages like ZoneDemand, object == 0 (null)
 void toggleMessage(MessageType type, item object, item data) {
   SPDLOG_INFO("toggleMessage {} {} {}",
-      type, object, data);
+      static_cast<int>(type), static_cast<int>(object), static_cast<int>(data));
   bool removed = false;
   for (int i = messages_o.size() - 1; i >= 0; i--) {
     if (messages_o[i].type == type && (messages_o[i].object == object ||
@@ -200,8 +200,7 @@ void readMessage(FileBuffer* file, int ndx) {
     m->object = EducationEffect;
   }
 
-  SPDLOG_INFO("readMessage type{} object{} data{}",
-      m->type, m->object, m->data);
+  SPDLOG_INFO("readMessage type{} object{} data{}", static_cast<int>(m->type), static_cast<int>(m->object), static_cast<int>(m->data));
 }
 
 void readMessages(FileBuffer* file, int version) {

@@ -103,7 +103,7 @@ vec3 adjustRoofTex(vec3 loc, vec3 br, vec3 axis) {
   float y = dot(along, vec3(axis.y, -axis.x, 0));
   y = -length(vec3(0, y, along.z));
   vec3 result = vec3(0, 0.25, 0) + vec3(x,y,0)/16.f;
-  result.y = clamp(result.y, 0.f, 0.25f);
+  result.y = glm::clamp(result.y, 0.f, 0.25f);
   result.z = 1;
   return result;
 }

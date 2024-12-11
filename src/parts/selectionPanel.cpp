@@ -848,7 +848,7 @@ void personPanel(Part* result, Person* selection) {
     item activity = indices[i];
     float score = scores[activity];
     if (score < -1) continue;
-    score = clamp(score, -1.f, 9.99f);
+    score = glm::clamp(score, -1.f, 9.99f);
 
     char* actName = 0;
     if (activity == selection->activity) {

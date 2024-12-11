@@ -13,7 +13,7 @@
 #include <set>
 #include <sys/stat.h>
 
-namespace fs = std::experimental::filesystem;
+namespace fs = std::filesystem;
 
 #if defined (__linux__) || defined (__APPLE__)
   #include <dirent.h>
@@ -171,7 +171,7 @@ vector<char*> readDirectory(const char* dirName, const char* ext) {
   return files;
 }
 
-struct less_char_star : binary_function <char*,char*,bool> {
+struct less_char_star {
   bool operator() (char* const& x, char* const& y) const {
     int cmp = strcmpi_s(x, y);
     return cmp < 0;
@@ -442,7 +442,7 @@ vector<char*> getSubfoldersInDir(std::string dir) {
 
   SPDLOG_INFO("Getting subfolders as char* in {}", dir);
 
-  char *element = "";
+  char *element;
   std::error_code err;
   bool isDir;
   for(auto f: fs::directory_iterator(dir, err)) {

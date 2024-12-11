@@ -285,11 +285,11 @@ float getTerrainColorU(float z, float nz) {
 
   } else if (z < 0) {
     u = (z + 100)/100;
-    u = clamp(u*2+1, 1.f, 3.f);
+    u = glm::clamp(u*2+1, 1.f, 3.f);
 
   } else if (z < beachLine) {
     u = (z - beachLine + 1) / beachLine;
-    u = clamp(u*2+3, 3.f, 5.f);
+    u = glm::clamp(u*2+3, 3.f, 5.f);
 
   } else if (z > grassLine) {
     if (z > snowLine) {
@@ -297,24 +297,24 @@ float getTerrainColorU(float z, float nz) {
       /*
       float nz = td.n.z;
       nz = 1-nz;
-      nz = clamp(nz*3, 0, 1);
+      nz = glm::clamp(nz*3, 0, 1);
       //nz = 1-nz*nz;
       nz = 1-nz;
       */
 
       u = (z - snowLine) / 500;
-      u = clamp(u, 0.f, 2.f);
+      u = glm::clamp(u, 0.f, 2.f);
       //u *= nz;
-      u = clamp(u*2+9, 9.f, 11.f);
+      u = glm::clamp(u*2+9, 9.f, 11.f);
     } else {
       u = (z - grassLine) / (snowLine - grassLine);
-      u = clamp(u*2+7, 7.f, 9.f);
+      u = glm::clamp(u*2+7, 7.f, 9.f);
     }
 
   } else if (z > dryGrassLine) {
     z *= nz;
     u = (z - dryGrassLine) / (grassLine - dryGrassLine);
-    u = clamp(u*2+5, 5.f, 7.f);
+    u = glm::clamp(u*2+5, 5.f, 7.f);
 
   } else {
     u = 5;
@@ -342,7 +342,7 @@ TileData computeTileData(RenderChunkIndex ndx, item x, item y) {
 
   // Adjust color for slope
   float nz = td.n.z;
-  nz = clamp(pow(nz*2, 0.2), 0.25, 1.5);
+  nz = glm::clamp(pow(nz*2, 0.2), 0.25, 1.5);
   float u = getTerrainColorU(z, nz);
   td.x = getTerrainColor(u, getLandConfig().flags & _landDesert);
 
@@ -386,7 +386,7 @@ TileData getTileData(RenderChunkIndex ndx, item x, item y, float z) {
 
   // Adjust color for slope
   float nz = td.n.z;
-  nz = clamp(pow(nz*2, 0.2), 0.25, 1.5);
+  nz = glm::clamp(pow(nz*2, 0.2), 0.25, 1.5);
   float u = getTerrainColorU(z, nz);
   td.x = getTerrainColor(u, getLandConfig().flags & _landDesert);
 
@@ -888,25 +888,25 @@ void renderChunkInner(RenderChunkIndex ndx, int s, vec3 offset,
 
       } else if (z < 0) {
         u = (z + 100)/100;
-        u = clamp(u*2+1, 1.f, 3.f);
+        u = glm::clamp(u*2+1, 1.f, 3.f);
 
       } else if (z < beachLine) {
         u = (z - beachLine + 1) / 1;
-        u = clamp(u*2+3, 3.f, 5.f);
+        u = glm::clamp(u*2+3, 3.f, 5.f);
         renderWater = true;
 
       } else if (z > grassLine) {
         if (z > snowLine) {
           u = (z - snowLine) / 10;
-          u = clamp(u*2+9, 9.f, 11.f);
+          u = glm::clamp(u*2+9, 9.f, 11.f);
         } else {
           u = (z - grassLine) / (snowLine - grassLine);
-          u = clamp(u*2+7, 7.f, 9.f);
+          u = glm::clamp(u*2+7, 7.f, 9.f);
         }
 
       } else if (z > dryGrassLine) {
         u = (z - dryGrassLine) / (grassLine - dryGrassLine);
-        u = clamp(u*2+5, 5.f, 7.f);
+        u = glm::clamp(u*2+5, 5.f, 7.f);
 
       } else {
         u = 5;
@@ -1150,7 +1150,7 @@ void renderTrees(RenderChunkIndex ndx, vec3 offset) {
         // Adjust color for slope
         TileData td = getTileData(ndx, x, y, 0);
         float nz = td.n.z;
-        nz = clamp(pow(nz*2, 0.2), 0.25, 1.5);
+        nz = glm::clamp(pow(nz*2, 0.2), 0.25, 1.5);
 
         item randomSeed = x0*100000 + y0*100 + 19;
         int k = 0;

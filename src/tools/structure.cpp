@@ -197,10 +197,10 @@ void structure_mouse_move_callback(InputEvent event) {
         if (pl.x != -1) {
           vec3 pv = pl - loc;
           float x = designerSnap(length(vec2(pv))*2);
-          x = clamp(x, c(CDesignerGridSize), maxDist);
+          x = glm::clamp(x, c(CDesignerGridSize), maxDist);
           s->size.x = x;
           float z = round(pv.z / floorSize)*floorSize;
-          z = clamp(z, floorSize*.5f, maxDistZ);
+          z = glm::clamp(z, floorSize*.5f, maxDistZ);
           s->size.z = z;
         }
       }

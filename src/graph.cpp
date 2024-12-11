@@ -1932,7 +1932,7 @@ void reconfigure(item ndx, Configuration config) {
 void switchDirection(item ndx) {
   Edge* edge = getEdge(ndx);
   if (!(edge->flags & _graphExists)) return;
-  if (!edge->config.flags & _configOneWay) return;
+  if (!(edge->config.flags & _configOneWay)) return;
   item swap = edge->ends[0];
   edge->ends[0] = edge->ends[1];
   edge->ends[1] = swap;
@@ -2816,10 +2816,10 @@ void updateGraphVisuals(bool firstPass) {
           ratio = traversalTime / timeEstimate;
         }
 
-        accum += clamp(ratio - 2, 0.f, 100.f);
+        accum += glm::clamp(ratio - 2, 0.f, 100.f);
       }
 
-      float k = clamp(accum/laneBlocks.size()*0.05f, 0.f, 1.f);
+      float k = glm::clamp(accum/laneBlocks.size()*0.05f, 0.f, 1.f);
       k = k*k;
       if (culdesac) k = 0; // Supress a bug where culdesacs appear to have traffic
       entity->dataFlags &= ~(255 << 16);

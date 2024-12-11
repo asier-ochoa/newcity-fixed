@@ -371,7 +371,7 @@ void renderGraphElement(item ndx) {
 
 vec3 edgeCutsStartPoint;
 
-struct compareCuts : binary_function <vec3, vec3, bool> {
+struct compareCuts {
   bool operator() (vec3 const& x, vec3 const& y) const {
     return vecDistance(edgeCutsStartPoint, x) < vecDistance(edgeCutsStartPoint, y);
   }

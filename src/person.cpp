@@ -677,7 +677,7 @@ void putPersonInBuilding(item personNdx, item buildingNdx) {
   Person* person = getPerson(personNdx);
   item econ = getPersonEcon(personNdx);
   bool isTourist = person->flags & _personIsTourist;
-  if (!person->flags & _personExists) return;
+  if (!(person->flags & _personExists)) return;
 
   if (!(person->flags & _personTraveling) &&
       person->location == buildingNdx) {
@@ -1224,7 +1224,7 @@ void handleActivity(item personNdx) {
         assigned = true;
       }
     } else {
-      SPDLOG_INFO("broker failed: {} @ {}", supply, laneBlock);
+      SPDLOG_INFO("broker failed: {} @ {}", static_cast<int>(supply), static_cast<int>(laneBlock));
     }
   }
 
@@ -1583,7 +1583,7 @@ void evaluatePerson(item personNdx, float duration) {
     //SPDLOG_INFO("preson {} {} {} {} {} {}", durMult,
         //crimeEffects, prosperityEffects, educationEffects,
         //person->employer, person->flags & _personIsWorker);
-    float popFactor = clamp(numPeople(econ)/200000.f, 0.f, 10.f);
+    float popFactor = glm::clamp(numPeople(econ)/200000.f, 0.f, 10.f);
     float densityEffect = 1 + popFactor*c(CDensityCrime);
     heatMapAdd(Crime, loc, crimeEffects*duration*densityEffect);
     heatMapAdd(Prosperity, loc, prosperityEffects*durMult);
@@ -1635,8 +1635,8 @@ void evaluatePerson(item personNdx, float duration) {
       }
 
       socialClass /= family->members.size();
-      socialClass -= clamp(timeSinceStore-c(CStoreDays), 0.f, 1.f);
-      socialClass -= clamp(timeSinceWork-c(CWorkDays), 0.f, 1.f);
+      socialClass -= glm::clamp(timeSinceStore-c(CStoreDays), 0.f, 1.f);
+      socialClass -= glm::clamp(timeSinceWork-c(CWorkDays), 0.f, 1.f);
       socialClass += 1;
 
       float unemploymentDiff = unemploymentRate(family->econ) -
@@ -2103,7 +2103,7 @@ void readPerson(FileBuffer* file, int version, item personNdx) {
   } else {
     float wakeTime = fread_float(file);
     float maxWakeTime = time + c(CPersonUpdateTime)*oneHour;
-    wakeTime = clamp(wakeTime, time, maxWakeTime);
+    wakeTime = glm::clamp(wakeTime, time, maxWakeTime);
     setWakeTime(personNdx, wakeTime);
     person->sleepTime = fread_float(file);
     person->birthday = fread_float(file);

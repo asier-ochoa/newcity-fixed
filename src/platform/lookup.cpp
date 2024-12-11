@@ -9,11 +9,11 @@
 #include "spdlog/spdlog.h"
 
 #define _SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING
-#include <experimental/filesystem>
+#include <filesystem>
 #include <set>
 #include <algorithm>
 
-using namespace std::experimental::filesystem;
+using namespace std::filesystem;
 
 string fixFileCase(string in) {
   char* result = fixFileCase(strdup_s(in.c_str()));
@@ -103,7 +103,7 @@ bool compareStrings(const string& lhs,const string& rhs){
    return false;//equal should return false
 }
 
-struct lessString : binary_function <string, string, bool> {
+struct lessString {
   bool operator() (string const& x, string const& y) const {
     return compareStrings(x, y);
   }

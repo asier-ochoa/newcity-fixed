@@ -246,7 +246,7 @@ void buildingPanel(Part* result, Building* b) {
       float hx = i*1.1f + hmPad;
       float hmVal = heatMapGet((HeatMapIndex)i, b->location);
       int hmValI = round(hmVal*10);//+0.05;
-      hmValI = clamp(hmValI, 0, 10);
+      hmValI = glm::clamp(hmValI, 0, 10);
 
       Part* hmButt = panel(vec2(hx, 0.0f),
           vec2(1.0f, heatmapPanel->dim.end.y-(hmPad*2)));

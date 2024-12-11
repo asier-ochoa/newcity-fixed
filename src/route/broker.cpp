@@ -59,7 +59,7 @@ item locToChunk(vec3 loc) {
   return chunkNdx;
 }
 
-struct compareDistance : binary_function <ChunkDistance, ChunkDistance, bool> {
+struct compareDistance {
   bool operator() (ChunkDistance const& x, ChunkDistance const& y) const {
     return x.distance < y.distance;
   }

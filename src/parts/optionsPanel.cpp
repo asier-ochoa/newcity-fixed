@@ -520,7 +520,7 @@ Part* optionsPanel(float aspectRatio) {
 
     float slideVal = (interval-intervalSteps)/c(CMaxAutosaveInterval);
     if (interval == 0) slideVal = 1;
-    slideVal = clamp(slideVal, 0.f, 1.f);
+    slideVal = glm::clamp(slideVal, 0.f, 1.f);
     r(tabPanel, slider(vec2(halfWidth+optionsPad, y), vec2(halfWidth, scale),
       slideVal, setAutosaveInterval));
     y += scale + optionsPad;

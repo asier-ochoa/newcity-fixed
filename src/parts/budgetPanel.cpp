@@ -141,9 +141,9 @@ Part* budgetPanel() {
   int numBudgets = bpExpanded ? 10 : 3;
   if (getAspectRatio() < 1.4 && numBudgets > 7) numBudgets = 7;
   Budget b[10];
-  numBudgets = clamp(numBudgets, 0, 3+getNumHistoricalBudgets());
-  budgetPage = clamp(budgetPage, -getNumHistoricalBudgets(), 1);
-  int firstBudget = clamp(budgetPage-numBudgets+3,
+  numBudgets = glm::clamp(numBudgets, 0, 3+getNumHistoricalBudgets());
+  budgetPage = glm::clamp(budgetPage, -getNumHistoricalBudgets(), 1);
+  int firstBudget = glm::clamp(budgetPage-numBudgets+3,
       -getNumHistoricalBudgets(), 3-numBudgets);
 
   float tableX = 8;
@@ -179,13 +179,13 @@ Part* budgetPanel() {
 
   if (firstBudget > -getNumHistoricalBudgets()) {
     Part* pastButt = button(vec2(tableX-scale+bpPadding-1,0.125),
-        iconLeft, iconS, moveBudgetPage, -clamp(numBudgets, 2, 5));
+        iconLeft, iconS, moveBudgetPage, -glm::clamp(numBudgets, 2, 5));
     r(result, pastButt);
   }
 
   if (budgetPage < 0) {
     Part* futureButt = button(vec2(tableX-scale+bpPadding,0.125),
-        iconRight, iconS, moveBudgetPage, clamp(numBudgets, 2, 5));
+        iconRight, iconS, moveBudgetPage, glm::clamp(numBudgets, 2, 5));
     r(result, futureButt);
   }
 

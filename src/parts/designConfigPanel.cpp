@@ -550,7 +550,7 @@ static bool designParameterQuickset(Part* part, InputEvent event) {
 
 static float parseDesignParamter(item param) {
   float val = 0;
-  float multiplier = 1;
+  double multiplier = 1;
   char* str = designParameterStr[param];
   bool neg = false;
 
@@ -916,7 +916,7 @@ Part* designConfigPanel() {
     item numTex = numMatchingTexturesForBuilding(getSelectedDesignNdx());
     float colorSliderLoc = numTex <= 1 ? 0.f : b->color*1.0f/(numTex-1);
     float sliderWidth = (dcpWidth*.72f)-dcpScale-dcpPadding;
-    colorSliderLoc = clamp(colorSliderLoc, 0.f, 1.f);
+    colorSliderLoc = glm::clamp(colorSliderLoc, 0.f, 1.f);
     b->color = colorSliderLoc*(numTex-1);
     r(result, slider(vec2(dcpScale,y), vec2(sliderWidth,dcpScale), colorSliderLoc, setColor));
     Part* tspAlbedoBtn = r(result, button(vec2(dcpWidth*.72f,y), iconMenu, vec2(dcpWidth*.28f, dcpScale), strdup_s("Select"), openTextureSelect, TSSAlbedo));

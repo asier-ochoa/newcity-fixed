@@ -229,7 +229,7 @@ void heatmap_mouse_move_callback(InputEvent event) {
     if (loc.z < beachLine) loc.z = beachLine;
     float hmVal = heatMapGet(getHeatMap(), loc);
     int hmValI = round(hmVal*10);
-    hmValI = clamp(hmValI, 0, 10);
+    hmValI = glm::clamp(hmValI, 0, 10);
     float dist = getCameraDistance();
     float size = dist/15;
     vec3 z = vec3(0,0,size*2);

@@ -144,7 +144,7 @@ Part* amenityInfoPart(vec2 loc, vec2 size,
     float aspect = imgDim.x / imgDim.y;
     float sizeY = size.y-y-padding;
     float maxX = std::min(.5f*(pnl->dim.end.x-padding*2), sizeY*aspect);
-    float imgSizeX = clamp(size.x, 0.f, maxX);
+    float imgSizeX = glm::clamp(size.x, 0.f, maxX);
     Part* img = r(pnl, image(vec2(0,y), imgSizeX,
           strdup_s(imageFile.c_str()), &sizeY));
     img->dim.start.z -= 0.5f;
