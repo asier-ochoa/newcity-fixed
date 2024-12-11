@@ -269,6 +269,8 @@ fn build_glfw(b: *std.Build, target: std.Build.ResolvedTarget, optimize: std.bui
             glfw_path ++ "src/linux_joystick.c",
         });
 
+        glfw_lib.linkSystemLibrary("GL");
+        glfw_lib.linkSystemLibrary("GLU");
         glfw_lib.linkSystemLibrary("X11");
         glfw_lib.linkSystemLibrary("Xrandr");
 
@@ -283,6 +285,20 @@ fn build_glfw(b: *std.Build, target: std.Build.ResolvedTarget, optimize: std.bui
     });
 
     return glfw_lib;
+}
+
+fn build_glew(b: *std.Build, target: std.Build.ResolvedTarget, optimize: std.builtin.OptimizeMode) !*std.Build.Step.Compile {
+    const glew_lib = b.addStaticLibrary(.{
+        .name = "GLEW_1130",
+        .target = target,
+        .optimize = optimize,
+        .pic = true,
+        .link_libc = true,
+    });
+    glew_lib.addCSourceFile(.{
+        .file = .{.cwd_relative = "external/glew-1.13.0/src/glew.c"},
+    });
+    return glew_lib;
 }
 
 pub fn build(b: *std.Build) !void {
@@ -334,14 +350,16 @@ pub fn build(b: *std.Build) !void {
     const glfw_lib = try build_glfw(b, target, optimize);
     newcity_exe.root_module.linkLibrary(glfw_lib);
 
+    // Declare GLEW
+    const glew_lib = try build_glew(b, target, optimize);
+    newcity_exe.root_module.linkLibrary(glew_lib);
+
     // Configure linking
-    // Make sure to link to c++ stdlib
     newcity_exe.addLibraryPath(.{.cwd_relative = "lib/"});
     newcity_exe.addLibraryPath(.{.cwd_relative = "external/steam/lib/linux64"});
     newcity_exe.linkLibCpp();
-    // Local deps
-    newcity_exe.addObjectFile(.{ .cwd_relative = "build/external/libGLEW_1130.a" });
-    newcity_exe.addObjectFile(.{ .cwd_relative = "build/libfreetyped.a" });
+
+    newcity_exe.addObjectFile(.{.cwd_relative = "build/libfreetyped.a"});
     // GLFW link deps
     newcity_exe.linkSystemLibrary("OpenGL");
     newcity_exe.linkSystemLibrary("GLX");
