@@ -210,9 +210,80 @@ const newcity_c_sources = [_][]const u8{
     "src/lz4.c",
     "src/md4c/md4c.c",
 };
-const lua_c_sources = [_][]const u8{
-    
+
+const GLFWBackendAPI = enum {
+    X11,
+    Wayland,
+    WIN32,
 };
+
+fn build_glfw(b: *std.Build, target: std.Build.ResolvedTarget, optimize: std.builtin.OptimizeMode) !*std.Build.Step.Compile {
+    const glfw_path = "external/glfw-3.3/";
+    const glfw_lib = b.addStaticLibrary(.{
+        .name = "glfw3",
+        .target = target,
+        .optimize = optimize,
+        .link_libc = true,
+        .pic = true,
+    });
+    // Quick hack for mappings.h
+    glfw_lib.defineCMacro("NULL", "0");
+    // Declare internal header files
+    var sources = std.ArrayList([]const u8).init(b.allocator);
+    // Add common headers
+    try sources.appendSlice(&.{
+        glfw_path ++ "src/internal.h",
+        glfw_path ++ "src/mappings.h",
+        glfw_path ++ "include/GLFW/glfw3.h",
+        glfw_path ++ "include/GLFW/glfw3native.h",
+    });
+    glfw_lib.addIncludePath(.{.cwd_relative = "external/glfw-3.3/include/"});
+    // Add common sources
+    try sources.appendSlice(&.{
+        glfw_path ++ "src/context.c",
+        glfw_path ++ "src/init.c",
+        glfw_path ++ "src/input.c",
+        glfw_path ++ "src/monitor.c",
+        glfw_path ++ "src/vulkan.c",
+        glfw_path ++ "src/window.c",
+    });
+
+    const backend: GLFWBackendAPI = switch (target.result.os.tag) {
+        .linux => .X11,
+        else => @panic("os not supported"),
+    };
+
+    if (backend == .X11) {
+        // As a replacement to glfw_config.h
+        glfw_lib.defineCMacro("_GLFW_X11", "1");
+        try sources.appendSlice(&.{
+            glfw_path ++ "src/x11_init.c",
+            glfw_path ++ "src/x11_monitor.c",
+            glfw_path ++ "src/x11_window.c",
+            glfw_path ++ "src/xkb_unicode.c",
+            glfw_path ++ "src/posix_time.c",
+            glfw_path ++ "src/posix_thread.c",
+            glfw_path ++ "src/glx_context.c",
+            glfw_path ++ "src/egl_context.c",
+            glfw_path ++ "src/osmesa_context.c",
+            glfw_path ++ "src/linux_joystick.c",
+        });
+
+        glfw_lib.linkSystemLibrary("X11");
+        glfw_lib.linkSystemLibrary("Xrandr");
+
+        // Math and time libraries
+        glfw_lib.linkSystemLibrary("rt");
+        glfw_lib.linkSystemLibrary("m");
+    }
+
+    glfw_lib.addCSourceFiles(.{
+        .files = sources.items,
+        .flags = &.{"-Wall"},
+    });
+
+    return glfw_lib;
+}
 
 pub fn build(b: *std.Build) !void {
     const target = b.standardTargetOptions(.{});
@@ -220,6 +291,7 @@ pub fn build(b: *std.Build) !void {
 
     // Declare extra compile options
     // b.option(bool, "Enable Steam", "Enables compiling the steam")
+
 
     // Declare main program
     const newcity_exe = b.addExecutable(.{
@@ -252,11 +324,15 @@ pub fn build(b: *std.Build) !void {
         .files = &newcity_c_sources,
     });
     newcity_exe.addCSourceFiles(.{
-       .files = try getLuaFiles(b),
+       .files = try getCSourcesInPath(b, "external/lua-5.3.5/src/"),
     });
     // Configure header files
     newcity_exe.addIncludePath(.{.cwd_relative = "src/"});
     addLibraryIncludePaths(newcity_exe);
+
+    // Declare GLFW
+    const glfw_lib = try build_glfw(b, target, optimize);
+    newcity_exe.root_module.linkLibrary(glfw_lib);
 
     // Configure linking
     // Make sure to link to c++ stdlib
@@ -264,7 +340,6 @@ pub fn build(b: *std.Build) !void {
     newcity_exe.addLibraryPath(.{.cwd_relative = "external/steam/lib/linux64"});
     newcity_exe.linkLibCpp();
     // Local deps
-    newcity_exe.addObjectFile(.{ .cwd_relative = "build/external/glfw-3.3/src/libglfw3.a" });
     newcity_exe.addObjectFile(.{ .cwd_relative = "build/external/libGLEW_1130.a" });
     newcity_exe.addObjectFile(.{ .cwd_relative = "build/libfreetyped.a" });
     // GLFW link deps
@@ -306,15 +381,17 @@ fn addLibraryIncludePaths(newcity_exe: *std.Build.Step.Compile) void {
     newcity_exe.addSystemIncludePath(.{.cwd_relative = "external/StackWalker/include/"});
 }
 
-fn getLuaFiles(b: *std.Build) ![][]const u8 {
+/// - path: Must end with a trailing slash
+fn getCSourcesInPath(b: *std.Build, path: []const u8) ![][]const u8 {
+    if (!std.mem.endsWith(u8, path, "/")) @panic("Path must end with a trailing slash!");
     var files = std.ArrayList([]const u8).init(b.allocator);
-    const lua_dir = try std.fs.cwd().openDir("external/lua-5.3.5/src/", .{
+    const code_dir = try std.fs.cwd().openDir(path, .{
         .iterate = true,
     });
-    var iter = lua_dir.iterate();
+    var iter = code_dir.iterate();
     while (try iter.next()) |e| {
         if (e.kind == .file and std.mem.endsWith(u8, e.name, ".c")) {
-            try files.append(try std.mem.concat(b.allocator, u8, &.{"external/lua-5.3.5/src/", e.name}));
+            try files.append(try std.mem.concat(b.allocator, u8, &.{path, e.name}));
         }
     }
     return files.toOwnedSlice();
