@@ -228,6 +228,8 @@ pub fn build(b: *std.Build) !void {
         .optimize = optimize,
         .link_libc = true,
     });
+    newcity_exe.root_module.sanitize_c = false;
+
     // Configure defines
     newcity_exe.defineCMacro("TW_STATIC", null);
     newcity_exe.defineCMacro("TW_NO_LIB_PRAGMA", null);
@@ -239,7 +241,7 @@ pub fn build(b: *std.Build) !void {
     newcity_exe.defineCMacro("BOOST_NO_EXCEPTIONS", null);
     newcity_exe.defineCMacro("INCLUDE_STEAM", null);
     newcity_exe.defineCMacro("LP_DEBUG", null);
-    newcity_exe.defineCMacro("INCLUDE_STEAM", null);
+    newcity_exe.defineCMacro("INCLUDE_STEAM", "0");
 
     // Configure source files
     newcity_exe.addCSourceFiles(.{
@@ -261,12 +263,25 @@ pub fn build(b: *std.Build) !void {
     newcity_exe.addLibraryPath(.{.cwd_relative = "lib/"});
     newcity_exe.addLibraryPath(.{.cwd_relative = "external/steam/lib/linux64"});
     newcity_exe.linkLibCpp();
-    newcity_exe.linkSystemLibrary("glfw");
-    newcity_exe.linkSystemLibrary("glew");
+    // Local deps
+    newcity_exe.addObjectFile(.{ .cwd_relative = "build/external/glfw-3.3/src/libglfw3.a" });
+    newcity_exe.addObjectFile(.{ .cwd_relative = "build/external/libGLEW_1130.a" });
+    newcity_exe.addObjectFile(.{ .cwd_relative = "build/libfreetyped.a" });
+    // GLFW link deps
+    newcity_exe.linkSystemLibrary("OpenGL");
+    newcity_exe.linkSystemLibrary("GLX");
+    newcity_exe.linkSystemLibrary("GLU");
+    newcity_exe.linkSystemLibrary("Xrandr");
+    newcity_exe.linkSystemLibrary("Xext");
+    newcity_exe.linkSystemLibrary("X11");
+    newcity_exe.linkSystemLibrary("rt");
+    // Freetype deps
+    newcity_exe.linkSystemLibrary("z");
+    newcity_exe.linkSystemLibrary("bz2");
+    newcity_exe.linkSystemLibrary("png");
+    // Other deps
+    newcity_exe.addObjectFile(.{.cwd_relative = "external/steam/lib/linux64/libsteam_api.so"});
     newcity_exe.linkSystemLibrary("openal");
-    newcity_exe.linkSystemLibrary("gl");
-    newcity_exe.linkSystemLibrary("freetype");
-    newcity_exe.linkSystemLibrary("steam_api");
 
     // Declare executable artifact
     const installed_exe = b.addInstallArtifact(newcity_exe, .{});

@@ -121,8 +121,7 @@ void checkOpenGLError() {
   // GL error code should be checked in a loop until it returns GL_NO_ERROR
   while (errorCode != GL_NO_ERROR) {
     errorString = gluErrorString(errorCode);
-    // TODO: Fix and uncomment
-//    SPDLOG_ERROR("OpenGL error {} reported ({}/{}): {}", errorCode, i, maxGLErrorDepth, errorString != NULL ? errorString : (const GLubyte*)"Unknown error string" );
+    SPDLOG_ERROR("OpenGL error {} reported ({}/{}): {}", errorCode, i, maxGLErrorDepth, errorString != NULL ? errorString : (const GLubyte*)"Unknown error string" );
 
     // At max depth const for error depth, break out of loop and mark in log appropriately
     if (i >= maxGLErrorDepth) {
