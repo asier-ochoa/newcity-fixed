@@ -230,13 +230,13 @@ fn build_glfw(b: *std.Build, target: std.Build.ResolvedTarget, optimize: std.bui
     glfw_lib.defineCMacro("NULL", "0");
     // Declare internal header files
     var sources = std.ArrayList([]const u8).init(b.allocator);
-    // Add common headers
-    try sources.appendSlice(&.{
-        glfw_path ++ "src/internal.h",
-        glfw_path ++ "src/mappings.h",
-        glfw_path ++ "include/GLFW/glfw3.h",
-        glfw_path ++ "include/GLFW/glfw3native.h",
-    });
+    // // Add common headers
+    // try sources.appendSlice(&.{
+    //     glfw_path ++ "src/internal.h",
+    //     glfw_path ++ "src/mappings.h",
+    //     glfw_path ++ "include/GLFW/glfw3.h",
+    //     glfw_path ++ "include/GLFW/glfw3native.h",
+    // });
     glfw_lib.addIncludePath(.{.cwd_relative = "external/glfw-3.3/include/"});
     // Add common sources
     try sources.appendSlice(&.{
@@ -301,6 +301,81 @@ fn build_glew(b: *std.Build, target: std.Build.ResolvedTarget, optimize: std.bui
     return glew_lib;
 }
 
+fn build_freetype(b: *std.Build, target: std.Build.ResolvedTarget, optimize: std.builtin.OptimizeMode) !*std.Build.Step.Compile {
+    const ft_path = "external/freetype/";
+    const ft_lib = b.addStaticLibrary(.{
+        .name = "freetype",
+        .target = target,
+        .optimize = optimize,
+        .pic = true,
+        .link_libc = true,
+    });
+    ft_lib.addIncludePath(b.path("external/freetype/include"));
+
+    // Required to build library
+    ft_lib.defineCMacro("FT2_BUILD_LIBRARY", "1");
+    ft_lib.defineCMacro("FT_CONFIG_OPTION_SYSTEM_ZLIB", "1");
+    
+    // Linking dependencies
+    ft_lib.linkSystemLibrary("z");
+    ft_lib.linkSystemLibrary("bz2");
+    ft_lib.linkSystemLibrary("png");
+    ft_lib.linkSystemLibrary("harfbuzz");
+
+    // Add base source files
+    ft_lib.addCSourceFiles(.{.files = &.{
+        ft_path ++ "src/autofit/autofit.c",
+        ft_path ++ "src/base/ftbase.c",
+        ft_path ++ "src/base/ftbbox.c",
+        ft_path ++ "src/base/ftbdf.c",
+        ft_path ++ "src/base/ftbitmap.c",
+        ft_path ++ "src/base/ftcid.c",
+        ft_path ++ "src/base/ftfntfmt.c",
+        ft_path ++ "src/base/ftfstype.c",
+        ft_path ++ "src/base/ftgasp.c",
+        ft_path ++ "src/base/ftglyph.c",
+        ft_path ++ "src/base/ftgxval.c",
+        ft_path ++ "src/base/ftinit.c",
+        ft_path ++ "src/base/ftlcdfil.c",
+        ft_path ++ "src/base/ftmm.c",
+        ft_path ++ "src/base/ftotval.c",
+        ft_path ++ "src/base/ftpatent.c",
+        ft_path ++ "src/base/ftpfr.c",
+        ft_path ++ "src/base/ftstroke.c",
+        ft_path ++ "src/base/ftsynth.c",
+        ft_path ++ "src/base/ftsystem.c",
+        ft_path ++ "src/base/fttype1.c",
+        ft_path ++ "src/base/ftwinfnt.c",
+        ft_path ++ "src/bdf/bdf.c",
+        ft_path ++ "src/bzip2/ftbzip2.c",
+        ft_path ++ "src/cache/ftcache.c",
+        ft_path ++ "src/cff/cff.c",
+        ft_path ++ "src/cid/type1cid.c",
+        ft_path ++ "src/gzip/ftgzip.c",
+        ft_path ++ "src/lzw/ftlzw.c",
+        ft_path ++ "src/pcf/pcf.c",
+        ft_path ++ "src/pfr/pfr.c",
+        ft_path ++ "src/psaux/psaux.c",
+        ft_path ++ "src/pshinter/pshinter.c",
+        ft_path ++ "src/psnames/psnames.c",
+        ft_path ++ "src/raster/raster.c",
+        ft_path ++ "src/sfnt/sfnt.c",
+        ft_path ++ "src/smooth/smooth.c",
+        ft_path ++ "src/truetype/truetype.c",
+        ft_path ++ "src/type1/type1.c",
+        ft_path ++ "src/type42/type42.c",
+        ft_path ++ "src/winfonts/winfnt.c",
+    }});
+
+    // Freetype configuration step
+    // const ft_h_config = b.addConfigHeader(.{
+    //     .style = .{.cmake = .{.cwd_relative = "external/freetype/builds/unix/ftconfig.in"}},
+    // }, .{});
+    // ft_lib.addConfigHeader(ft_h_config);
+    // ft_lib.
+    return ft_lib;
+}
+
 pub fn build(b: *std.Build) !void {
     const target = b.standardTargetOptions(.{});
     const optimize = b.standardOptimizeOption(.{});
@@ -348,11 +423,17 @@ pub fn build(b: *std.Build) !void {
 
     // Declare GLFW
     const glfw_lib = try build_glfw(b, target, optimize);
-    newcity_exe.root_module.linkLibrary(glfw_lib);
+    const glfw_lib_artifact = b.addInstallArtifact(glfw_lib, .{});
+    const glfw_step = b.step("glfw", "Copies glfw's build artifact");
+    glfw_step.dependOn(&glfw_lib_artifact.step);
+    newcity_exe.linkLibrary(glfw_lib_artifact.artifact);
 
     // Declare GLEW
     const glew_lib = try build_glew(b, target, optimize);
-    newcity_exe.root_module.linkLibrary(glew_lib);
+    const glew_lib_artifact = b.addInstallArtifact(glew_lib, .{});
+    const glew_step = b.step("glew", "Copies glew's build artifact");
+    glew_step.dependOn(&glew_lib_artifact.step);
+    newcity_exe.linkLibrary(glew_lib_artifact.artifact);
 
     // Configure linking
     newcity_exe.addLibraryPath(.{.cwd_relative = "lib/"});
@@ -379,6 +460,11 @@ pub fn build(b: *std.Build) !void {
     // Declare executable artifact
     const installed_exe = b.addInstallArtifact(newcity_exe, .{});
     b.getInstallStep().dependOn(&installed_exe.step);
+
+    const ft_lib = try build_freetype(b, target, optimize);
+    const s = b.step("test", "description: []const u8");
+    const xd = b.addInstallArtifact(ft_lib, .{});
+    s.dependOn(&xd.step);
 }
 
 fn addLibraryIncludePaths(newcity_exe: *std.Build.Step.Compile) void {
