@@ -310,7 +310,7 @@ fn build_freetype(b: *std.Build, target: std.Build.ResolvedTarget, optimize: std
         .pic = true,
         .link_libc = true,
     });
-    ft_lib.addIncludePath(b.path("external/freetype/include"));
+    ft_lib.addIncludePath(b.path("external/freetype/include/"));
 
     // Required to build library
     ft_lib.defineCMacro("FT2_BUILD_LIBRARY", "1");
@@ -367,12 +367,31 @@ fn build_freetype(b: *std.Build, target: std.Build.ResolvedTarget, optimize: std
         ft_path ++ "src/winfonts/winfnt.c",
     }});
 
-    // Freetype configuration step
-    // const ft_h_config = b.addConfigHeader(.{
-    //     .style = .{.cmake = .{.cwd_relative = "external/freetype/builds/unix/ftconfig.in"}},
-    // }, .{});
-    // ft_lib.addConfigHeader(ft_h_config);
-    // ft_lib.
+    // Freetype create configuration file
+    const ft_config_in_file = try std.fs.cwd().openFile(ft_path ++ "builds/unix/ftconfig.in", .{});
+    const ft_config_buff_og = try b.allocator.alloc(u8, (try ft_config_in_file.metadata()).size());
+    _ = try ft_config_in_file.reader().read(ft_config_buff_og);
+
+    const have_unsitd_h = true;
+    const have_fcntl_h = true;
+    const have_stdint_h = true;
+
+    var ft_config_buff: []u8 = undefined;
+    if (have_unsitd_h) {
+        ft_config_buff = try std.mem.replaceOwned(u8, b.allocator, ft_config_buff_og, "#undef HAVE_UNISTD_H", "#define HAVE_UNISTD_H 1");
+    }
+    if (have_fcntl_h) {
+        ft_config_buff = try std.mem.replaceOwned(u8, b.allocator, ft_config_buff_og, "#undef HAVE_FCNTL_H", "#define HAVE_FCNTL 1");
+    }
+    if (have_stdint_h) {
+        ft_config_buff = try std.mem.replaceOwned(u8, b.allocator, ft_config_buff_og, "#undef HAVE_STDINT_H", "#define HAVE_STDINT_H 1");
+    }
+    ft_config_buff = try std.mem.replaceOwned(u8, b.allocator, ft_config_buff_og, "/undef", "#undef");
+    const ft_h_config_file = b.addWriteFile(b.getInstallPath(.{.header = {}}, "freetype/ftconfig.h"), ft_config_buff);
+    const conf_step = b.step("genconf", "");
+    conf_step.dependOn(&ft_h_config_file.step);
+    ft_lib.addIncludePath(b.path(b.getInstallPath(.{.header = {}}, "freetype/")));
+
     return ft_lib;
 }
 
